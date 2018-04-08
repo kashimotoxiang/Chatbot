@@ -75,14 +75,20 @@ class Spider():
                 file_content = f.read()
 
                 soup = BeautifulSoup(file_content, 'lxml')
-                questiondetails = soup.select(
-                    "#d_msCon")
-                if len(questiondetails) == 0:
-                    return
-                accept_content = soup.select(
-                    ".b_anscont_cont > .crazy_new")[0]
+                questiontitle = soup.select("#d_askH1")
+                questiondetails = soup.select("#d_msCon")
+                accept_content = soup.select(".b_anscont_cont > .crazy_new")
                 if len(accept_content) == 0:
                     return
+
+                if isinstance(questiontitle, list):
+                    questiontitle = questiontitle[0].get_text()
+
+                if isinstance(questiondetails, list):
+                    questiondetails = questiondetails[0]
+
+                if isinstance(accept_content, list):
+                    accept_content = accept_content[0]
 
                 def sample_process(data):
                     for source, substitute in error_char.items():
@@ -93,10 +99,11 @@ class Spider():
                     data = data.rstrip().lstrip()
                     return data
 
-                questiondetails = sample_process(questiondetails[0].get_text())
+                questiondetails = sample_process(questiondetails.get_text())
                 accept_content = sample_process(accept_content.get_text())
 
                 result = [file,
+                          ''.join(questiontitle),
                           ''.join(questiondetails),
                           ''.join(accept_content)]
 

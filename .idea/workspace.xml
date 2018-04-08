@@ -47,8 +47,8 @@
       <file leaf-file-name="Spider.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Spider.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="77" column="38" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
+            <state relative-caret-position="972">
+              <caret line="101" column="70" selection-start-line="101" selection-start-column="70" selection-end-line="101" selection-end-column="70" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -199,9 +199,9 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="width" value="1920" />
-    <option name="height" value="1200" />
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="width" value="1680" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -211,7 +211,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -243,6 +242,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -415,12 +415,13 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1959707" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2032967" />
       <window_info anchor="bottom" id="TODO" order="7" weight="0.32983193" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Run" order="3" visible="true" weight="0.42752102" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.42752102" />
       <window_info anchor="bottom" id="Version Control" order="11" weight="0.32878152" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.32878152" />
       <window_info anchor="right" x="0" y="22" width="1680" height="1028" id="SciView" order="4" type="WINDOWED" weight="0.42225772" />
@@ -428,7 +429,7 @@
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.32878152" />
       <window_info anchor="bottom" x="-101" y="-1058" width="1920" height="1058" id="Debug" order="4" weight="0.3970588" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="right" id="Coverage" order="3" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Concurrent Activities Diagram" order="14" visible="true" weight="0.32983193" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
@@ -441,34 +442,34 @@
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.32983193" />
-      <window_info active="true" anchor="bottom" id="Concurrent Activities Diagram" order="14" visible="true" weight="0.32983193" />
+      <window_info anchor="right" id="Coverage" order="3" side_tool="true" />
     </layout>
     <layout-to-restore>
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32878152" />
-      <window_info anchor="bottom" id="Find" order="2" weight="0.32983193" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="3" weight="0.30987394" />
-      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21001221" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="7" weight="0.32983193" />
+      <window_info anchor="bottom" id="Version Control" order="11" weight="0.32878152" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.30987394" />
       <window_info active="true" anchor="bottom" id="Inspection Results" order="13" visible="true" weight="0.2762605" />
-      <window_info anchor="bottom" id="Python Console" order="12" weight="0.32878152" />
-      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="Find" order="2" weight="0.32983193" />
       <window_info anchor="right" x="0" y="0" width="430" height="1000" id="Documentation" order="6" side_tool="true" weight="0.39882854" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="right" id="Coverage" order="4" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32878152" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="11" weight="0.32878152" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info active="true" anchor="bottom" id="Concurrent Activities Diagram" order="14" visible="true" weight="0.32983193" />
       <window_info anchor="right" x="0" y="22" width="1680" height="1028" id="SciView" order="5" type="WINDOWED" weight="0.42225772" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" x="-101" y="-1058" width="1920" height="1058" id="Debug" order="4" type="FLOATING" visible="true" weight="0.33193278" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="right" id="Coverage" order="4" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="12" weight="0.32878152" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -824,8 +825,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Spider.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="77" column="38" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
+        <state relative-caret-position="972">
+          <caret line="101" column="70" selection-start-line="101" selection-start-column="70" selection-end-line="101" selection-end-column="70" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
