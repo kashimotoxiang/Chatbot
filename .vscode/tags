@@ -1,0 +1,233 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+make_wordvec.py	../word2vec/make_wordvec.py	1;"	kind:file	line:1
+pd	../word2vec/make_wordvec.py	/^import pandas as pd$/;"	kind:namespace	line:1
+np	../word2vec/make_wordvec.py	/^import numpy as np$/;"	kind:namespace	line:2
+pickle	../word2vec/make_wordvec.py	/^import pickle$/;"	kind:namespace	line:3
+re	../word2vec/make_wordvec.py	/^import re$/;"	kind:namespace	line:4
+save_obj	../word2vec/make_wordvec.py	/^def save_obj(obj, name):$/;"	kind:function	line:8
+load_obj	../word2vec/make_wordvec.py	/^def load_obj(name):$/;"	kind:function	line:13
+content	../word2vec/make_wordvec.py	/^content = pd.DataFrame(filecontents)$/;"	kind:variable	line:27
+id2word	../word2vec/make_wordvec.py	/^id2word = {str(data[1]): int(data[0])$/;"	kind:variable	line:28
+vec	../word2vec/make_wordvec.py	/^vec = content.iloc[:, 2:]$/;"	kind:variable	line:31
+vec	../word2vec/make_wordvec.py	/^vec = vec.rename(lambda x: str(int(x)-2), axis='columns')$/;"	kind:variable	line:32
+vec	../word2vec/make_wordvec.py	/^vec = np.array(vec, dtype='float32')$/;"	kind:variable	line:33
+word2vec	../word2vec/make_wordvec.py	/^word2vec = [[str(data[1])] + [float(x) for x in data[2:]]$/;"	kind:variable	line:39
+word2vec	../word2vec/make_wordvec.py	/^word2vec = pd.DataFrame(word2vec)$/;"	kind:variable	line:41
+cn_inputs.py	../cn_inputs.py	1;"	kind:file	line:1
+tf	../cn_inputs.py	/^import tensorflow as tf$/;"	kind:namespace	line:1
+TEXT_FEATURE_SIZE	../cn_inputs.py	/^TEXT_FEATURE_SIZE = 160$/;"	kind:variable	line:3
+get_feature_columns	../cn_inputs.py	/^def get_feature_columns(mode):$/;"	kind:function	line:5
+create_input_fn	../cn_inputs.py	/^def create_input_fn(mode, input_files, batch_size, num_epochs):$/;"	kind:function	line:37
+input_fn	../cn_inputs.py	/^  def input_fn():$/;"	kind:function	line:38
+__init__.py	../models/__init__.py	1;"	kind:file	line:1
+model.py	../models/model.py	1;"	kind:file	line:1
+tf	../models/model.py	/^import tensorflow as tf$/;"	kind:namespace	line:1
+helpers	../models/model.py	/^from models import helpers$/;"	kind:namespace	line:2
+FLAGS	../models/model.py	/^FLAGS = tf.flags.FLAGS$/;"	kind:variable	line:3
+process_state	../models/model.py	/^def process_state(states):$/;"	kind:function	line:5
+RNN	../models/model.py	/^def RNN($/;"	kind:function	line:27
+RNN_MaxPooling	../models/model.py	/^def RNN_MaxPooling(RNN_Init,$/;"	kind:function	line:84
+RNN_CNN_MaxPooling	../models/model.py	/^def RNN_CNN_MaxPooling($/;"	kind:function	line:114
+outputs	../models/model.py	/^        outputs = tf.concat([outputs[0], outputs[1]], axis=1)$/;"	kind:variable	line:130
+outputs	../models/model.py	/^    outputs = tf.expand_dims(outputs, -1)$/;"	kind:variable	line:132
+map_filter	../models/model.py	/^    def map_filter(filter_size):$/;"	kind:function	line:139
+_list	../models/model.py	/^    _list = list(map(map_filter, filtersizes))$/;"	kind:variable	line:209
+pooled_context_list	../models/model.py	/^    pooled_context_list = [x[0] for x in _list]$/;"	kind:variable	line:211
+pooled_utterance_list	../models/model.py	/^    pooled_utterance_list = [x[1] for x in _list]$/;"	kind:variable	line:212
+encoding_context	../models/model.py	/^    encoding_context = tf.concat(pooled_context_list, 3)$/;"	kind:variable	line:213
+encoding_utterance	../models/model.py	/^    encoding_utterance = tf.concat(pooled_utterance_list, 3)$/;"	kind:variable	line:214
+encoding_context	../models/model.py	/^    encoding_context = tf.reshape($/;"	kind:variable	line:216
+encoding_utterance	../models/model.py	/^    encoding_utterance = tf.reshape($/;"	kind:variable	line:218
+RNN_Attention	../models/model.py	/^def RNN_Attention(RNN_Init,$/;"	kind:function	line:224
+get_embeddings	../models/model.py	/^def get_embeddings(hparams):$/;"	kind:function	line:303
+dual_encoder_model	../models/model.py	/^def dual_encoder_model($/;"	kind:function	line:329
+helpers.py	../models/helpers.py	1;"	kind:file	line:1
+array	../models/helpers.py	/^import array$/;"	kind:namespace	line:1
+np	../models/helpers.py	/^import numpy as np$/;"	kind:namespace	line:2
+tf	../models/helpers.py	/^import tensorflow as tf$/;"	kind:namespace	line:3
+defaultdict	../models/helpers.py	/^from collections import defaultdict$/;"	kind:namespace	line:4
+fp	../models/helpers.py	/^import file_process as fp$/;"	kind:namespace	line:5
+load_vocab	../models/helpers.py	/^def load_vocab(filename):$/;"	kind:function	line:8
+load_glove_vectors	../models/helpers.py	/^def load_glove_vectors(filename, vocab):$/;"	kind:function	line:18
+build_initial_embedding_matrix	../models/helpers.py	/^def build_initial_embedding_matrix(vocab_dict, glove_dict, glove_vectors, embedding_dim):$/;"	kind:function	line:47
+test.py	../test.py	1;"	kind:file	line:1
+argparse	../test.py	/^import argparse$/;"	kind:namespace	line:1
+tf	../test.py	/^import tensorflow as tf$/;"	kind:namespace	line:2
+iris_data	../test.py	/^import iris_data$/;"	kind:namespace	line:4
+parser	../test.py	/^parser = argparse.ArgumentParser()$/;"	kind:variable	line:6
+help	../test.py	/^                    help='number of training steps')$/;"	kind:variable	line:9
+my_model	../test.py	/^def my_model(features, labels, mode, params):$/;"	kind:function	line:11
+main	../test.py	/^def main(argv):$/;"	kind:function	line:54
+make_data.py	../make_data.py	1;"	kind:file	line:1
+jieba	../make_data.py	/^import jieba$/;"	kind:namespace	line:4
+np	../make_data.py	/^import numpy as np$/;"	kind:namespace	line:5
+progressbar	../make_data.py	/^import progressbar$/;"	kind:namespace	line:6
+csv	../make_data.py	/^import csv$/;"	kind:namespace	line:7
+floor	../make_data.py	/^from math import floor$/;"	kind:namespace	line:8
+fp	../make_data.py	/^import file_process as fp$/;"	kind:namespace	line:9
+map	../make_data.py	/^from file_process import pool_map as map$/;"	kind:namespace	line:10
+tf	../make_data.py	/^import tensorflow as tf$/;"	kind:namespace	line:11
+os	../make_data.py	/^import os$/;"	kind:namespace	line:12
+HanziConv	../make_data.py	/^from hanziconv import HanziConv$/;"	kind:namespace	line:13
+functools	../make_data.py	/^import functools$/;"	kind:namespace	line:14
+cn_hparams	../make_data.py	/^import cn_hparams$/;"	kind:namespace	line:15
+FLAGS	../make_data.py	/^FLAGS = tf.flags.FLAGS$/;"	kind:variable	line:17
+Dataset	../make_data.py	/^class Dataset():$/;"	kind:class	line:20
+_stopwordset	../make_data.py	/^    _stopwordset = ''$/;"	kind:variable	line:22
+_counter	../make_data.py	/^    _counter = 0$/;"	kind:variable	line:24
+_bar	../make_data.py	/^    _bar = progressbar.ProgressBar(max_value=100)$/;"	kind:variable	line:25
+raw_data	../make_data.py	/^    raw_data = []$/;"	kind:variable	line:26
+_data_len	../make_data.py	/^    _data_len = 0$/;"	kind:variable	line:27
+_split_scope_sum	../make_data.py	/^    _split_scope_sum = 0$/;"	kind:variable	line:29
+_split_scope_1	../make_data.py	/^    _split_scope_1 = 0$/;"	kind:variable	line:30
+_split_scope_2	../make_data.py	/^    _split_scope_2 = 0$/;"	kind:variable	line:31
+train_data	../make_data.py	/^    train_data = []$/;"	kind:variable	line:34
+valid_data	../make_data.py	/^    valid_data = []$/;"	kind:variable	line:35
+test_data	../make_data.py	/^    test_data = []$/;"	kind:variable	line:36
+id2vec_lookup_list	../make_data.py	/^    id2vec_lookup_list = []$/;"	kind:variable	line:38
+word2id_lookup_list	../make_data.py	/^    word2id_lookup_list = {}$/;"	kind:variable	line:39
+_userdict	../make_data.py	/^    _userdict = ''$/;"	kind:variable	line:41
+__init__	../make_data.py	/^    def __init__(self, *, filename,  user_dict, stopword_dict, prop):$/;"	kind:member	line:43
+split_data_set	../make_data.py	/^    def split_data_set(self, prop, data, length):$/;"	kind:member	line:67
+map_neg_utterance	../make_data.py	/^        def map_neg_utterance(i):$/;"	kind:function	line:86
+map_train_data	../make_data.py	/^        def map_train_data(data):$/;"	kind:function	line:97
+map_test_data	../make_data.py	/^        def map_test_data(_data):$/;"	kind:function	line:109
+set_stopword	../make_data.py	/^    def set_stopword(self, files):$/;"	kind:member	line:124
+movestopwords	../make_data.py	/^    def movestopwords(self, sentence):$/;"	kind:member	line:140
+is_stopwords	../make_data.py	/^            def is_stopwords(word):$/;"	kind:function	line:145
+chinese_tokenizer	../make_data.py	/^    def chinese_tokenizer(self, documents):$/;"	kind:member	line:154
+create_csv_iter	../make_data.py	/^    def create_csv_iter(self, filename):$/;"	kind:member	line:165
+create_vocab	../make_data.py	/^    def create_vocab(self, input_iter, min_frequency):$/;"	kind:member	line:176
+transform_sentence	../make_data.py	/^    def transform_sentence(self, sequence, vocab_processor):$/;"	kind:member	line:190
+create_text_sequence_feature	../make_data.py	/^    def create_text_sequence_feature(self, fl, sentence, sentence_len, vocab):$/;"	kind:member	line:196
+create_example_train	../make_data.py	/^    def create_example_train(self, row, vocab):$/;"	kind:member	line:205
+create_example_test	../make_data.py	/^    def create_example_test(self, row, vocab):$/;"	kind:member	line:230
+create_tfrecords_file	../make_data.py	/^    def create_tfrecords_file(self, data, output_filename, example_fn):$/;"	kind:member	line:267
+write_vocabulary	../make_data.py	/^    def write_vocabulary(self, vocab_processor, outfile):$/;"	kind:member	line:282
+dataset	../make_data.py	/^    dataset = Dataset(filename="corpus\/corpus.csv",$/;"	kind:variable	line:295
+input_iter	../make_data.py	/^    input_iter = (x['question']+' '+x['answer'] for x in dataset.raw_data)$/;"	kind:variable	line:303
+vocab	../make_data.py	/^    vocab = dataset.create_vocab($/;"	kind:variable	line:304
+input	../make_data.py	/^    input = [[x['question'],x['answer'],x['distractor_0'],x['distractor_1'],x['distractor_2'],$/;"	kind:variable	line:317
+input	../make_data.py	/^    input = [[x['question'],x['answer'],x['distractor_0'],x['distractor_1'],x['distractor_2'],$/;"	kind:variable	line:327
+input	../make_data.py	/^    input = [[x['question'],x['answer'],x['label']] for x in dataset.train_data]$/;"	kind:variable	line:337
+cn_hparams.py	../cn_hparams.py	1;"	kind:file	line:1
+tf	../cn_hparams.py	/^import tensorflow as tf$/;"	kind:namespace	line:1
+os	../cn_hparams.py	/^import os$/;"	kind:namespace	line:2
+namedtuple	../cn_hparams.py	/^from collections import namedtuple$/;"	kind:namespace	line:3
+FLAGS	../cn_hparams.py	/^FLAGS = tf.flags.FLAGS$/;"	kind:variable	line:66
+HParams	../cn_hparams.py	/^HParams = namedtuple($/;"	kind:variable	line:68
+create_hparams	../cn_hparams.py	/^def create_hparams():$/;"	kind:function	line:87
+file_process.py	../file_process.py	1;"	kind:file	line:1
+pickle	../file_process.py	/^import pickle$/;"	kind:namespace	line:4
+multiprocessing	../file_process.py	/^import multiprocessing$/;"	kind:namespace	line:5
+savefile	../file_process.py	/^def savefile(savepath, content):$/;"	kind:function	line:7
+readfile	../file_process.py	/^def readfile(path):$/;"	kind:function	line:19
+save_obj	../file_process.py	/^def save_obj(obj, name):$/;"	kind:function	line:33
+load_obj	../file_process.py	/^def load_obj(name):$/;"	kind:function	line:38
+fun	../file_process.py	/^def fun(f, q_in, q_out):$/;"	kind:function	line:45
+pool_map	../file_process.py	/^def pool_map(f, X, nprocs=multiprocessing.cpu_count()):$/;"	kind:function	line:53
+cn_metrics.py	../cn_metrics.py	1;"	kind:file	line:1
+tf	../cn_metrics.py	/^import tensorflow as tf$/;"	kind:namespace	line:2
+functools	../cn_metrics.py	/^import functools$/;"	kind:namespace	line:3
+MetricSpec	../cn_metrics.py	/^from tensorflow.contrib.learn import MetricSpec$/;"	kind:namespace	line:4
+streaming_sparse_recall_at_k	../cn_metrics.py	/^from tensorflow.contrib.metrics import streaming_sparse_recall_at_k$/;"	kind:namespace	line:5
+create_evaluation_metrics	../cn_metrics.py	/^def create_evaluation_metrics():$/;"	kind:function	line:7
+cn_model.py	../cn_model.py	1;"	kind:file	line:1
+tf	../cn_model.py	/^import tensorflow as tf$/;"	kind:namespace	line:1
+sys	../cn_model.py	/^import sys$/;"	kind:namespace	line:2
+get_id_feature	../cn_model.py	/^def get_id_feature(features, key, len_key, max_len):$/;"	kind:function	line:5
+create_train_op	../cn_model.py	/^def create_train_op(loss, hparams):$/;"	kind:function	line:12
+create_model_fn	../cn_model.py	/^def create_model_fn(hparams, model_impl, model_fun,$/;"	kind:function	line:22
+model_fn	../cn_model.py	/^    def model_fn(features, targets, mode):  # estimator自己传的参数$/;"	kind:function	line:26
+cn_train.py	../cn_train.py	1;"	kind:file	line:1
+os	../cn_train.py	/^import os$/;"	kind:namespace	line:1
+time	../cn_train.py	/^import time$/;"	kind:namespace	line:2
+tf	../cn_train.py	/^import tensorflow as tf$/;"	kind:namespace	line:3
+cn_model	../cn_train.py	/^import cn_model$/;"	kind:namespace	line:4
+cn_hparams	../cn_train.py	/^import cn_hparams$/;"	kind:namespace	line:5
+cn_metrics	../cn_train.py	/^import cn_metrics$/;"	kind:namespace	line:6
+cn_inputs	../cn_train.py	/^import cn_inputs$/;"	kind:namespace	line:7
+dual_encoder_model	../cn_train.py	/^from models.model import dual_encoder_model$/;"	kind:namespace	line:8
+Estimator	../cn_train.py	/^from tensorflow.contrib.learn import Estimator$/;"	kind:namespace	line:9
+model	../cn_train.py	/^from models import model$/;"	kind:namespace	line:10
+FLAGS	../cn_train.py	/^FLAGS = tf.flags.FLAGS$/;"	kind:variable	line:12
+TIMESTAMP	../cn_train.py	/^TIMESTAMP = int(time.time())$/;"	kind:variable	line:14
+MODEL_DIR	../cn_train.py	/^    MODEL_DIR = FLAGS.model_dir$/;"	kind:variable	line:17
+MODEL_DIR	../cn_train.py	/^    MODEL_DIR = os.path.abspath(os.path.join(".\/runs", str(TIMESTAMP)))$/;"	kind:variable	line:19
+TRAIN_FILE	../cn_train.py	/^TRAIN_FILE = os.path.abspath(os.path.join(FLAGS.input_dir, "train.tfrecords"))$/;"	kind:variable	line:21
+VALIDATION_FILE	../cn_train.py	/^VALIDATION_FILE = os.path.abspath(os.path.join($/;"	kind:variable	line:22
+main	../cn_train.py	/^def main(unused_argv):$/;"	kind:function	line:28
+Spider.py	../Spider.py	1;"	kind:file	line:1
+BeautifulSoup	../Spider.py	/^from bs4 import BeautifulSoup$/;"	kind:namespace	line:1
+requests	../Spider.py	/^import requests$/;"	kind:namespace	line:2
+os	../Spider.py	/^import os$/;"	kind:namespace	line:3
+progressbar	../Spider.py	/^import progressbar$/;"	kind:namespace	line:4
+csv	../Spider.py	/^import csv$/;"	kind:namespace	line:5
+re	../Spider.py	/^import re$/;"	kind:namespace	line:6
+mp	../Spider.py	/^import multiprocessing as mp$/;"	kind:namespace	line:7
+functools	../Spider.py	/^import functools$/;"	kind:namespace	line:8
+re_match	../Spider.py	/^def re_match(rules, data):$/;"	kind:function	line:11
+Spider	../Spider.py	/^class Spider():$/;"	kind:class	line:24
+re_double_empty_line	../Spider.py	/^    re_double_empty_line = None$/;"	kind:variable	line:25
+csvfile	../Spider.py	/^    csvfile = None$/;"	kind:variable	line:26
+csv_writer	../Spider.py	/^    csv_writer = None$/;"	kind:variable	line:27
+filespath	../Spider.py	/^    filespath = []$/;"	kind:variable	line:28
+_bar_index	../Spider.py	/^    _bar_index = 0$/;"	kind:variable	line:29
+bar	../Spider.py	/^    bar = None$/;"	kind:variable	line:30
+__init__	../Spider.py	/^    def __init__(self, Folder_Path):$/;"	kind:member	line:32
+file_process	../Spider.py	/^    def file_process(self, file):$/;"	kind:member	line:45
+start	../Spider.py	/^    def start(self):$/;"	kind:member	line:113
+Folder_Path	../Spider.py	/^Folder_Path = r'\/Users\/yuxiangli\/备份\/网站资料库\/www.120ask.com\/question\/'$/;"	kind:variable	line:122
+spider	../Spider.py	/^spider = Spider(Folder_Path)$/;"	kind:variable	line:123
+cn_test.py	../cn_test.py	1;"	kind:file	line:1
+os	../cn_test.py	/^import os$/;"	kind:namespace	line:1
+time	../cn_test.py	/^import time$/;"	kind:namespace	line:2
+itertools	../cn_test.py	/^import itertools$/;"	kind:namespace	line:3
+sys	../cn_test.py	/^import sys$/;"	kind:namespace	line:4
+tf	../cn_test.py	/^import tensorflow as tf$/;"	kind:namespace	line:5
+cn_model	../cn_test.py	/^import cn_model$/;"	kind:namespace	line:6
+cn_hparams	../cn_test.py	/^import cn_hparams$/;"	kind:namespace	line:7
+cn_metrics	../cn_test.py	/^import cn_metrics$/;"	kind:namespace	line:8
+cn_inputs	../cn_test.py	/^import cn_inputs$/;"	kind:namespace	line:9
+dual_encoder_model	../cn_test.py	/^from models.model import dual_encoder_model$/;"	kind:namespace	line:10
+FLAGS	../cn_test.py	/^FLAGS = tf.flags.FLAGS$/;"	kind:variable	line:16
+hparams	../cn_test.py	/^  hparams = cn_hparams.create_hparams()$/;"	kind:variable	line:25
+model_fn	../cn_test.py	/^  model_fn = cn_model.create_model_fn(hparams, model_impl=dual_encoder_model)$/;"	kind:variable	line:26
+estimator	../cn_test.py	/^  estimator = tf.contrib.learn.Estimator($/;"	kind:variable	line:27
+model_fn	../cn_test.py	/^    model_fn=model_fn,$/;"	kind:variable	line:28
+model_dir	../cn_test.py	/^    model_dir=FLAGS.model_dir,$/;"	kind:variable	line:29
+config	../cn_test.py	/^    config=tf.contrib.learn.RunConfig())$/;"	kind:variable	line:30
+input_fn_test	../cn_test.py	/^  input_fn_test = cn_inputs.create_input_fn($/;"	kind:variable	line:32
+mode	../cn_test.py	/^    mode=tf.contrib.learn.ModeKeys.EVAL,$/;"	kind:variable	line:33
+input_files	../cn_test.py	/^    input_files=[FLAGS.test_file],$/;"	kind:variable	line:34
+batch_size	../cn_test.py	/^    batch_size=FLAGS.test_batch_size,$/;"	kind:variable	line:35
+num_epochs	../cn_test.py	/^    num_epochs=1)$/;"	kind:variable	line:36
+eval_metrics	../cn_test.py	/^  eval_metrics = cn_metrics.create_evaluation_metrics()$/;"	kind:variable	line:38
+cn_predict.py	../cn_predict.py	1;"	kind:file	line:1
+os	../cn_predict.py	/^import os$/;"	kind:namespace	line:1
+time	../cn_predict.py	/^import time$/;"	kind:namespace	line:2
+itertools	../cn_predict.py	/^import itertools$/;"	kind:namespace	line:3
+sys	../cn_predict.py	/^import sys$/;"	kind:namespace	line:4
+np	../cn_predict.py	/^import numpy as np$/;"	kind:namespace	line:5
+tf	../cn_predict.py	/^import tensorflow as tf$/;"	kind:namespace	line:6
+cn_model	../cn_predict.py	/^import cn_model$/;"	kind:namespace	line:7
+cn_hparams	../cn_predict.py	/^import cn_hparams$/;"	kind:namespace	line:8
+cn_metrics	../cn_predict.py	/^import cn_metrics$/;"	kind:namespace	line:9
+cn_inputs	../cn_predict.py	/^import cn_inputs$/;"	kind:namespace	line:10
+dual_encoder_model	../cn_predict.py	/^from models.model import dual_encoder_model$/;"	kind:namespace	line:11
+load_vocab	../cn_predict.py	/^from models.helpers import load_vocab$/;"	kind:namespace	line:12
+FLAGS	../cn_predict.py	/^FLAGS = tf.flags.FLAGS$/;"	kind:variable	line:16
+tokenizer_fn	../cn_predict.py	/^def tokenizer_fn(iterator):$/;"	kind:function	line:22
+vp	../cn_predict.py	/^vp = tf.contrib.learn.preprocessing.VocabularyProcessor.restore($/;"	kind:variable	line:26
+INPUT_CONTEXT	../cn_predict.py	/^INPUT_CONTEXT = "Example context"$/;"	kind:variable	line:30
+POTENTIAL_RESPONSES	../cn_predict.py	/^POTENTIAL_RESPONSES = ["Response 1", "Response 2"]$/;"	kind:variable	line:31
+get_features	../cn_predict.py	/^def get_features(context, utterance):$/;"	kind:function	line:33
+hparams	../cn_predict.py	/^  hparams = cn_hparams.create_hparams()$/;"	kind:variable	line:47
+model_fn	../cn_predict.py	/^  model_fn = cn_model.create_model_fn(hparams, model_impl=dual_encoder_model)$/;"	kind:variable	line:48
+estimator	../cn_predict.py	/^  estimator = tf.contrib.learn.Estimator(model_fn=model_fn, model_dir=FLAGS.model_dir)$/;"	kind:variable	line:49
+prob	../cn_predict.py	/^    prob = estimator.predict(input_fn=lambda: get_features(INPUT_CONTEXT, r))$/;"	kind:variable	line:57
