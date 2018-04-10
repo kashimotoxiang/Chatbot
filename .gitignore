@@ -1,6 +1,10 @@
 run/*
 run/
 run
+runs/*
+runs/
+runs
+__pycache__/
 bigdata/
 word2vec/
 *.bin
@@ -8,3 +12,4 @@ word2vec/
 *.index
 *.data*
 *.loca
+.git.bfg-report/

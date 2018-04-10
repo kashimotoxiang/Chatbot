@@ -7,13 +7,12 @@ import progressbar
 import csv
 from math import floor
 import file_process as fp
-from file_process import pool_map as map
 import tensorflow as tf
 import os
 from hanziconv import HanziConv
 import functools
 import cn_hparams
-
+import copy
 FLAGS = tf.flags.FLAGS
 
 
@@ -40,6 +39,9 @@ class Dataset():
     # path
     _userdict = ''
 
+    _bar_index = 0
+    bar = None
+
     def __init__(self, *, filename,  user_dict, stopword_dict, prop):
         # 初始化停用词表
         if stopword_dict is not []:
@@ -53,21 +55,24 @@ class Dataset():
 
         # 导入数据集
         # 读取csv, 创建dataframe
-        print('导入数据集')
+        print('导入数据集...')
         with open(filename, "r") as csvFile:
             reader = csv.reader(csvFile)
             self.raw_data = [{
-                'question': row[0], 'answer': row[1]} for row in reader if len(row[0])!=0]
+                'question': row[0], 'answer': row[1]} for row in reader if len(row[0]) != 0]
             csvFile.close()
         self._data_len = len(self.raw_data)
 
         # 切分数据集
+        print('切分数据集...')
         self.split_data_set(prop, self.raw_data, self._data_len)
 
     def split_data_set(self, prop, data, length):
         """
         分配数据集
         """
+        print('切分数据集...按比例分配')
+
         self._split_scope_sum = sum(prop)
         self._split_scope_1 = prop[0] / self._split_scope_sum
         self._split_scope_2 = prop[1] / self._split_scope_sum
@@ -79,9 +84,18 @@ class Dataset():
         test_data_begin = valid_data_end
         test_data_end = length
 
-        self.train_data = data[train_data_begin:train_data_end]
-        self.test_data = data[valid_data_begin:valid_data_end]
-        self.valid_data = data[test_data_begin:test_data_end]
+        print('train_data:\t{0}-{1},\t({2})'.format(train_data_begin,
+                                                    train_data_end, train_data_end-train_data_begin))
+        print('valid_data:\t{0}-{1},\t({2})'.format(valid_data_begin,
+                                                    valid_data_end, valid_data_end-valid_data_begin))
+        print('test_data:\t{0}-{1},\t({2})'.format(test_data_begin,
+                                                   test_data_end, test_data_end - test_data_begin))
+
+        print('切分数据集...数据拷贝')
+
+        self.train_data = data[train_data_begin:train_data_end].copy()
+        self.test_data = data[valid_data_begin:valid_data_end].copy()
+        self.valid_data = data[test_data_begin:test_data_end].copy()
 
         def map_neg_utterance(i):
             try:
@@ -97,10 +111,13 @@ class Dataset():
         def map_train_data(data):
             data['label'] = 1
             return data
-
+        print('切分数据集...训练集正样本标签')
         pos_train_data = list(map(map_train_data, self.train_data))
+        print('切分数据集...训练集生成负样本')
         neg_utterance = list(
             map(map_neg_utterance, range(len(self.train_data))))
+        print('切分数据集...合成训练集')
+
         neg_train_data = [{
             'question': self.train_data[i]['question'], 'answer': neg_utterance[i], 'label': 0} for i in range(len(self.train_data))]
         self.train_data = pos_train_data + neg_train_data
@@ -117,8 +134,9 @@ class Dataset():
                     print(e)
 
             return _data
-
+        print('切分数据集...合成test集')
         self.test_data = list(map(map_test_data, self.test_data))
+        print('切分数据集...合成valid集')
         self.valid_data = list(map(map_test_data, self.valid_data))
 
     def set_stopword(self, files):
@@ -204,7 +222,7 @@ class Dataset():
 
     def create_example_train(self, row, vocab):
         """
-        Creates a training example for the Ubuntu Dialog Corpus dataset.
+        Creates a training example for the Ub tu Dialog Corpus dataset.
         Returnsthe a tensorflow.Example Protocol Buffer object.
         """
         context, utterance, label = row
@@ -272,8 +290,8 @@ class Dataset():
         with tf.python_io.TFRecordWriter(output_filename) as writer:
             print("Creating TFRecords file at {}...".format(output_filename))
 
-            examples = fp.pool_map(lambda row: example_fn(
-                row).SerializeToString(), data)
+            examples = list(map(lambda row: example_fn(
+                row).SerializeToString(), data))
 
             print("Wrote to {}".format(output_filename))
             for item in examples:
@@ -292,12 +310,12 @@ class Dataset():
 
 
 if __name__ == "__main__":
-    dataset = Dataset(filename="corpus/corpus.csv",
+    dataset = Dataset(filename="corpus/aftercleaning_includesubtitle.csv",
                       user_dict="dict/自定义词典.txt",
                       stopword_dict=[
                           'dict/哈工大停用词表.txt',
                           'dict/自定义停用词.txt'],
-                      prop=[0.6, 0.2, 0.2])
+                      prop=[0.9, 0.05, 0.05])
 
     print("Creating vocabulary...")
     input_iter = (x['question']+' '+x['answer'] for x in dataset.raw_data)
@@ -314,9 +332,9 @@ if __name__ == "__main__":
 
     # Create tfrecords
     print("Creating validation tfrecords...")
-    input = [[x['question'],x['answer'],x['distractor_0'],x['distractor_1'],x['distractor_2'],
-              x['distractor_3'],x['distractor_4'],x['distractor_5'],
-              x['distractor_6'],x['distractor_7'],x['distractor_8'],
+    input = [[x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
+              x['distractor_3'], x['distractor_4'], x['distractor_5'],
+              x['distractor_6'], x['distractor_7'], x['distractor_8'],
               ] for x in dataset.valid_data]
     dataset.create_tfrecords_file(input,
                                   output_filename=os.path.join(
@@ -324,9 +342,9 @@ if __name__ == "__main__":
                                   example_fn=functools.partial(dataset.create_example_test, vocab=vocab))
 
     print("Creating test tfrecords...")
-    input = [[x['question'],x['answer'],x['distractor_0'],x['distractor_1'],x['distractor_2'],
-              x['distractor_3'],x['distractor_4'],x['distractor_5'],
-              x['distractor_6'],x['distractor_7'],x['distractor_8'],
+    input = [[x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
+              x['distractor_3'], x['distractor_4'], x['distractor_5'],
+              x['distractor_6'], x['distractor_7'], x['distractor_8'],
               ] for x in dataset.test_data]
     dataset.create_tfrecords_file(input,
                                   output_filename=os.path.join(
@@ -334,7 +352,8 @@ if __name__ == "__main__":
                                   example_fn=functools.partial(dataset.create_example_test, vocab=vocab))  # 固定函数变量
 
     print("Creating valitraindation tfrecords...")
-    input = [[x['question'],x['answer'],x['label']] for x in dataset.train_data]
+    input = [[x['question'], x['answer'], x['label']]
+             for x in dataset.train_data]
     dataset.create_tfrecords_file(input,
                                   output_filename=os.path.join(
                                       FLAGS.output_dir, "train.tfrecords"),
