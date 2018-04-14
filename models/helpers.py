@@ -8,7 +8,7 @@ import os
 
 def load_vocab(filename):
     vocab = None
-    with open(filename,encoding='utf-8') as f:
+    with open(filename, encoding="UTF-8") as f:
         vocab = f.read().splitlines()
     dct = defaultdict(int)
     for idx, word in enumerate(vocab):
@@ -26,7 +26,8 @@ def load_glove_vectors(filename, vocab):
     vectors = array.array('d')
     current_idx = 0
 
-    if os.path.splitext(filename)[1]=='.pkl':
+
+    if os.path.splitext(filename)[1]=='.npy':
         word2vec = np.load(filename)
         for tokens in word2vec:
             # tokens = line.split(" ")
@@ -46,7 +47,6 @@ def load_glove_vectors(filename, vocab):
                     dct[word] = current_idx
                     vectors.extend(float(x) for x in entries)
                     current_idx += 1
-
     word_dim = len(entries)
     num_vectors = len(dct)
     tf.logging.info("Found {} out of {} vectors in Glove".format(

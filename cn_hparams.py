@@ -36,6 +36,7 @@ if tf.flags.FLAGS.old_data:
     # /data文件夹
     tf.flags.DEFINE_string("input_dir", "./old_data",
                            "Directory containing input data files 'train.tfrecords' and 'validation.tfrecords'")
+
     # Pre-trained embeddings
     # "./data/glove.6B.100d.txt"
     # ./data/vocabulary.txt
@@ -52,7 +53,8 @@ else:
     # /data文件夹
     tf.flags.DEFINE_string("input_dir", "./data",
                            "Directory containing input data files 'train.tfrecords' and 'validation.tfrecords'")
-    tf.flags.DEFINE_string("word2vec_path", 'word2vec/word2vec.npy',
+    #'word2vec/word2vec.npy'
+    tf.flags.DEFINE_string("word2vec_path", None,
                            "Path to dataset.pkl file")
     tf.flags.DEFINE_string("vocab_path", './data/vocabulary.txt',
                            "Path to vocabulary.txt file")
@@ -67,7 +69,7 @@ tf.flags.DEFINE_string("RNN_model_dir", 'runs/RNN',
 tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
 tf.flags.DEFINE_integer("num_epochs", None,
                         "Number of training Epochs. Defaults to indefinite.")
-tf.flags.DEFINE_integer("eval_every", 105,
+tf.flags.DEFINE_integer("eval_every", 10,
                         "Evaluate after this many train steps")
 
 
