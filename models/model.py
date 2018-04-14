@@ -1,6 +1,7 @@
 import tensorflow as tf
-from models import helpers
+from models import data_loader
 FLAGS = tf.flags.FLAGS
+
 
 def process_state(states):
     ''''
@@ -9,19 +10,19 @@ def process_state(states):
       ①检查是GRU还是LSTM的输出
     2.
     '''
-    if isinstance(states,tf.nn.rnn_cell.LSTMStateTuple):
-        #单向LSTM的输出，是一个namedtuple，我们需要其中的h部分
+    if isinstance(states, tf.nn.rnn_cell.LSTMStateTuple):
+        # 单向LSTM的输出，是一个namedtuple，我们需要其中的h部分
         states = states.h
     elif isinstance(states, tuple):
-        if(len(states)!=2):
+        if(len(states) != 2):
             raise ValueError('states illegal')
-        m=isinstance(states[0], tf.nn.rnn_cell.LSTMStateTuple)
-        n=isinstance(states[1],tf.nn.rnn_cell.LSTMStateTuple)
-        #沿着最后一个axis拼接，默认最后一个维度代表feature，这样不强制states[0]是二维的数据，也可以是三维的outputs
+        m = isinstance(states[0], tf.nn.rnn_cell.LSTMStateTuple)
+        n = isinstance(states[1], tf.nn.rnn_cell.LSTMStateTuple)
+        # 沿着最后一个axis拼接，默认最后一个维度代表feature，这样不强制states[0]是二维的数据，也可以是三维的outputs
         if(m and n):
             states = tf.concat([states[0].h, states[1].h], -1)
         elif(m and not n):
-            states = tf.concat([states[0].h, states[1]], -1)#m=true n=false
+            states = tf.concat([states[0].h, states[1]], -1)  # m=true n=false
         elif(not m and n):
             states = tf.concat([states[0], states[1].h], -1)
         else:
@@ -86,6 +87,7 @@ def RNN(
             dtype=tf.float32)
     return rnn_outputs, rnn_states
 
+
 def RNN_MaxPooling(RNN_Init,
                    hparams,
                    context_embedded,
@@ -98,7 +100,8 @@ def RNN_MaxPooling(RNN_Init,
     # OUTPUTS shape:[batch_size,sequence_length,dim]
     if isinstance(outputs, tuple):
         # 双向GRU和LSTM就把前向网络和后向网络连接起来
-        outputs = tf.concat([outputs[0], outputs[1]], axis=-1)#按最后一列feature拼接!!
+        outputs = tf.concat([outputs[0], outputs[1]],
+                            axis=-1)  # 按最后一列feature拼接!!
     print(outputs.get_shape())
     outputs = tf.expand_dims(outputs, -1)  # 增加通道维度
 
@@ -109,7 +112,7 @@ def RNN_MaxPooling(RNN_Init,
     outputs = tf.nn.max_pool(outputs, ksize=[1, outputs.get_shape()[1], 1, 1],
                              strides=[1, 1, 1, 1], padding='VALID')  # [batch_size,sequence_length,dim,1]
     print('after maxpool {}'.format(outputs))
-    outputs = tf.squeeze(outputs,axis=[1,3])
+    outputs = tf.squeeze(outputs, axis=[1, 3])
     print('after reshape {}'.format(outputs))
 
     encoding_context, encoding_utterance = tf.split(outputs, 2, 0)
@@ -306,19 +309,17 @@ def RNN_Attention(RNN_Init,
         return outputs_context, outputs_utterance
 
 
-
-
 def get_embeddings(hparams):
     if hparams.word2vec_path and hparams.vocab_path:
         tf.logging.info("Loading Glove embeddings...")
 
-        vocab_array, vocab_dict = helpers.load_vocab(hparams.vocab_path)
+        vocab_array, vocab_dict = data_loader.load_vocab(hparams.vocab_path)
         # glove_vectors ndarray
         # glove_dict dict
-        glove_vectors, glove_dict = helpers.load_glove_vectors(
+        glove_vectors, glove_dict = data_loader.load_glove_vectors(
             hparams.word2vec_path, vocab=set(vocab_array))
 
-        initializer = helpers.build_initial_embedding_matrix(
+        initializer = data_loader.build_initial_embedding_matrix(
             vocab_dict, glove_dict, glove_vectors, hparams.embedding_dim)
         return tf.get_variable(
             "word_embeddings",
@@ -365,12 +366,12 @@ def dual_encoder_model(
 
     if model_fun is RNN:
         outputs, states = RNN(RNNInit,
-                                    hparams,
-                                    context_embedded,
-                                    context_len,
-                                    utterance_embedded,
-                                    utterance_len,
-                                    is_bidirection)
+                              hparams,
+                              context_embedded,
+                              context_len,
+                              utterance_embedded,
+                              utterance_len,
+                              is_bidirection)
         encoding_context, encoding_utterance = process_state(states)
     elif model_fun in set([RNN_MaxPooling, RNN_CNN_MaxPooling, RNN_CNN_MaxPooling, RNN_Attention]):
         encoding_context, encoding_utterance = model_fun(RNNInit,
@@ -389,7 +390,7 @@ def dual_encoder_model(
         _shape = encoding_context.get_shape()[1].value
         print('M_shape {}'.format(encoding_context.get_shape()[1].value))
         M = tf.get_variable("M",
-                            shape=[_shape,_shape],
+                            shape=[_shape, _shape],
                             initializer=tf.truncated_normal_initializer())
 
         # "Predict" a  response: c * M
@@ -399,8 +400,10 @@ def dual_encoder_model(
             generated_response, 2)  # 增加了第三个维度？？
         # 增加维度是为了让每个batch分开做乘积，也就是乘积只做用在后面两个维度
         encoding_utterance = tf.expand_dims(encoding_utterance, 2)
-        print('expand dims generated response {}'.format(generated_response.get_shape()))
-        print('expand dims encoding utterence {}'.format(encoding_utterance.get_shape()))
+        print('expand dims generated response {}'.format(
+            generated_response.get_shape()))
+        print('expand dims encoding utterence {}'.format(
+            encoding_utterance.get_shape()))
         # Dot product between generated response and actual response
         # (c * M) * r
         logits = tf.matmul(generated_response,
@@ -409,11 +412,10 @@ def dual_encoder_model(
         logits = tf.squeeze(logits, [2])  # 删除第三个维度?
         print('squeeze logits shape {}'.format(logits.get_shape()))
         # Apply sigmoid to convert logits to probabilities
-        probs = tf.sigmoid(logits)#没有问题，是sigmoid不是softmax
+        probs = tf.sigmoid(logits)  # 没有问题，是sigmoid不是softmax
 
         if mode == tf.contrib.learn.ModeKeys.INFER:
             return probs, None
-
 
         print("error logits shape{}:".format(logits.get_shape()))
         print("error targets shape{}:".format(targets.get_shape()))

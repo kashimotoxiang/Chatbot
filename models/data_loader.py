@@ -2,7 +2,6 @@ import array
 import numpy as np
 import tensorflow as tf
 from collections import defaultdict
-import file_process as fp
 import os
 
 
@@ -26,8 +25,7 @@ def load_glove_vectors(filename, vocab):
     vectors = array.array('d')
     current_idx = 0
 
-
-    if os.path.splitext(filename)[1]=='.npy':
+    if os.path.splitext(filename)[1] == '.npy':
         word2vec = np.load(filename)
         for tokens in word2vec:
             # tokens = line.split(" ")
@@ -37,7 +35,7 @@ def load_glove_vectors(filename, vocab):
                 dct[word] = current_idx
                 vectors.extend(float(x) for x in entries)
                 current_idx += 1
-    elif os.path.splitext(filename)[1]=='.txt':
+    elif os.path.splitext(filename)[1] == '.txt':
         with open(filename, "r", encoding="utf-8") as f:
             for _, line in enumerate(f):
                 tokens = line.split(" ")
@@ -67,5 +65,5 @@ def build_initial_embedding_matrix(vocab_dict, glove_dict, glove_vectors, embedd
 
     return initial_embeddings
 
-if __name__ == '__main__':
-    print(textarr)
+
+

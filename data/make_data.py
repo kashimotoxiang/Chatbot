@@ -1,6 +1,9 @@
 # =================================
 # using for initialize data sets
 # =================================
+import sys
+sys.path.append("..")
+
 import jieba
 import numpy as np
 import progressbar
@@ -57,7 +60,7 @@ class Dataset():
         with open(filename, "r", encoding="UTF-8") as csvFile:
             reader = csv.reader(csvFile)
             self.raw_data = [{
-                'question': row[0], 'answer': row[1]} for row in reader if len(row[0])!=0]
+                'question': row[0], 'answer': row[1]} for row in reader if len(row[0]) != 0]
             csvFile.close()
         self._data_len = len(self.raw_data)
 
@@ -306,40 +309,34 @@ if __name__ == "__main__":
     print("Total vocabulary size: {}".format(len(vocab.vocabulary_)))
 
     # Create vocabulary.txt file
-    dataset.write_vocabulary(
-        vocab, os.path.join(FLAGS.output_dir, "vocabulary.txt"))
+    dataset.write_vocabulary(vocab, "new_data/vocabulary.txt")
 
     # Save vocab processor
-    vocab.save(os.path.join(FLAGS.output_dir, "vocab_processor.bin"))
+    vocab.save("new_data/vocab_processor.bin")
 
     # Create tfrecords
     print("Creating validation tfrecords...")
-    input = [[x['question'],x['answer'],x['distractor_0'],x['distractor_1'],x['distractor_2'],
-              x['distractor_3'],x['distractor_4'],x['distractor_5'],
-              x['distractor_6'],x['distractor_7'],x['distractor_8'],
+    input = [[x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
+              x['distractor_3'], x['distractor_4'], x['distractor_5'],
+              x['distractor_6'], x['distractor_7'], x['distractor_8'],
               ] for x in dataset.valid_data]
-    dataset.create_tfrecords_file(input,
-                                  output_filename=os.path.join(
-                                      FLAGS.output_dir, "validation.tfrecords"),
+    dataset.create_tfrecords_file(input, 'new_data/validation.tfrecords',
                                   example_fn=functools.partial(dataset.create_example_test, vocab=vocab))
 
     print("Creating test tfrecords...")
-    input = [[x['question'],x['answer'],x['distractor_0'],x['distractor_1'],x['distractor_2'],
-              x['distractor_3'],x['distractor_4'],x['distractor_5'],
-              x['distractor_6'],x['distractor_7'],x['distractor_8'],
+    input = [[x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
+              x['distractor_3'], x['distractor_4'], x['distractor_5'],
+              x['distractor_6'], x['distractor_7'], x['distractor_8'],
               ] for x in dataset.test_data]
-    dataset.create_tfrecords_file(input,
-                                  output_filename=os.path.join(
-                                      FLAGS.output_dir, "test.tfrecords"),
+    dataset.create_tfrecords_file(input, 'new_data/test.tfrecords',
                                   example_fn=functools.partial(dataset.create_example_test, vocab=vocab))  # 固定函数变量
 
     print("Creating valitraindation tfrecords...")
-    input = [[x['question'],x['answer'],x['label']] for x in dataset.train_data]
-    dataset.create_tfrecords_file(input,
-                                  output_filename=os.path.join(
-                                      FLAGS.output_dir, "train.tfrecords"),
+    input = [[x['question'], x['answer'], x['label']]
+             for x in dataset.train_data]
+    dataset.create_tfrecords_file(input, 'new_data/train.tfrecords',
                                   example_fn=functools.partial(dataset.create_example_train, vocab=vocab))
 
-    fp.save_obj(dataset, './data/dataset.pkl')
+    fp.save_obj(dataset, 'new_data/make_data.pkl')
 
     pass

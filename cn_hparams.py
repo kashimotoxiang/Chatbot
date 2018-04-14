@@ -1,6 +1,10 @@
 import tensorflow as tf
 import os
 from collections import namedtuple
+tf.flags.DEFINE_boolean("old_data", False,
+                        "decide if use the old data")
+
+
 # 1495
 # Model Parameters
 tf.flags.DEFINE_integer(
@@ -17,9 +21,6 @@ tf.flags.DEFINE_integer("max_utterance_len", 80,
                         "Truncate utterance to this length")
 
 
-
-
-
 # Training Parameters
 tf.flags.DEFINE_float("learning_rate", 0.001, "Learning rate")
 tf.flags.DEFINE_integer("batch_size", 64, "Batch size during training")
@@ -27,8 +28,7 @@ tf.flags.DEFINE_integer("eval_batch_size", 8, "Batch size during evaluation")
 tf.flags.DEFINE_string("optimizer", "Adam",
                        "Optimizer Name (Adam, Adagrad, etc)")
 
-tf.flags.DEFINE_boolean("old_data", True,
-                        "decide if use the old data")
+
 if tf.flags.FLAGS.old_data:
     print("using old data/word vector/vocabulary/vocab_processor")
     tf.flags.DEFINE_integer("embedding_dim", 100,
@@ -45,20 +45,22 @@ if tf.flags.FLAGS.old_data:
 
     tf.flags.DEFINE_string("vocab_path", './old_data/vocabulary.txt',
                            "Path to vocabulary.txt file")
-    tf.flags.DEFINE_string("vocab_processor_file", "./old_data/vocab_processor.bin", "Saved vocabulary processor file")
+    tf.flags.DEFINE_string(
+        "vocab_processor_file", "./old_data/vocab_processor.bin", "Saved vocabulary processor file")
 else:
     print("using new data/word vector/vocabulary/vocab_processor")
     tf.flags.DEFINE_integer("embedding_dim", 300,
                             "Dimensionality of the embeddings")
     # /data文件夹
-    tf.flags.DEFINE_string("input_dir", "./data",
+    tf.flags.DEFINE_string("input_dir", "./data/new_data/",
                            "Directory containing input data files 'train.tfrecords' and 'validation.tfrecords'")
-    #'word2vec/word2vec.npy'
-    tf.flags.DEFINE_string("word2vec_path", None,
-                           "Path to dataset.pkl file")
-    tf.flags.DEFINE_string("vocab_path", './data/vocabulary.txt',
+    # 'word2vec/word2vec.npy'
+    tf.flags.DEFINE_string("word2vec_path", os.path.join(tf.flags.FLAGS.input_dir, 'word2vec.npy'),
+                           "Path to word2vec.npy file")
+    tf.flags.DEFINE_string("vocab_path", os.path.join(tf.flags.FLAGS.input_dir, 'vocabulary.txt'),
                            "Path to vocabulary.txt file")
-    tf.flags.DEFINE_string("vocab_processor_file", "./data/vocab_processor.bin", "Saved vocabulary processor file")
+    tf.flags.DEFINE_string(
+        "vocab_processor_file", os.path.join(tf.flags.FLAGS.input_dir, 'vocab_processor.bin'), "Saved vocabulary processor file")
 
 tf.flags.DEFINE_string("RNN_CNN_MaxPooling_model_dir", 'runs/RNN_CNN_MaxPooling',
                        "Directory to store model checkpoints (defaults to ./runs)")
@@ -69,7 +71,7 @@ tf.flags.DEFINE_string("RNN_model_dir", 'runs/RNN',
 tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
 tf.flags.DEFINE_integer("num_epochs", None,
                         "Number of training Epochs. Defaults to indefinite.")
-tf.flags.DEFINE_integer("eval_every", 10,
+tf.flags.DEFINE_integer("eval_every", 1,
                         "Evaluate after this many train steps")
 
 
@@ -84,10 +86,10 @@ tf.flags.DEFINE_integer("max_sentence_len", 160, "Maximum Sentence Length")
 
 tf.flags.DEFINE_string(
     "output_dir", os.path.abspath("./data"),
-    "Output directory for TFrEcord files (default = './data')")
+    "Output directory for TFRecord files (default = './data')")
 tf.flags.DEFINE_integer(
     "distraction_num", 9,
-    "Output directory for TFrEcord files (default = './data')")
+    "Output directory for TFRecord files (default = './data')")
 
 
 FLAGS = tf.flags.FLAGS

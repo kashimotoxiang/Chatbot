@@ -16,3 +16,7 @@ word2vec/
 *.loca
 .git.bfg-report/
 *.tfrecords
+.idea/
+.idea/*
+./data/new_data/word2vec.npy
+./data/np/word2vec.npy

@@ -11,7 +11,7 @@ import cn_inputs
 from models.model import dual_encoder_model
 from models import model
 from make_data import Dataset
-from models.helpers import load_vocab
+from models.data_loader import load_vocab
 import pickle
 
 tf.flags.DEFINE_string("model_dir", "./runs/RNN_CNN_MaxPooling", "Directory to load model checkpoints from")
