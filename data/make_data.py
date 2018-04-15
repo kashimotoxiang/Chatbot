@@ -295,7 +295,7 @@ class Dataset():
 
 
 if __name__ == "__main__":
-    dataset = Dataset(filename="corpus/corpus.csv",
+    dataset = Dataset(filename="corpus/corpus_small.csv",
                       user_dict="dict/自定义词典.txt",
                       stopword_dict=[
                           'dict/哈工大停用词表.txt',

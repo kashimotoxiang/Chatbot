@@ -52,6 +52,7 @@ def load_glove_vectors(filename, vocab):
     vec = np.array(vectors).reshape(num_vectors, word_dim)
     # np.save('./data/vec', vec)
     # np.save('./data/dct', dct)
+    # assert False
     return [vec, dct]
 
 
@@ -64,6 +65,3 @@ def build_initial_embedding_matrix(vocab_dict, glove_dict, glove_vectors, embedd
         initial_embeddings[word_idx, :] = glove_vectors[glove_word_idx]
 
     return initial_embeddings
-
-
-

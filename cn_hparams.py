@@ -9,7 +9,7 @@ tf.flags.DEFINE_boolean("old_data", False,
 # Model Parameters
 tf.flags.DEFINE_integer(
     "vocab_size",
-    3398,
+    3389,
     "The size of the vocabulary. Only change this if you changed the preprocessing")
 # Model Parameters
 '''tf.flags.DEFINE_integer("embedding_dim", 300,
@@ -27,6 +27,35 @@ tf.flags.DEFINE_integer("batch_size", 64, "Batch size during training")
 tf.flags.DEFINE_integer("eval_batch_size", 8, "Batch size during evaluation")
 tf.flags.DEFINE_string("optimizer", "Adam",
                        "Optimizer Name (Adam, Adagrad, etc)")
+
+tf.flags.DEFINE_string("RNN_CNN_MaxPooling_model_dir", 'runs/RNN_CNN_MaxPooling',
+                       "Directory to store model checkpoints (defaults to ./runs)")
+tf.flags.DEFINE_string("RNN_MaxPooling_model_dir", 'runs/RNN_MaxPooling',
+                       "Directory to store model checkpoints (defaults to ./runs)")
+tf.flags.DEFINE_string("RNN_model_dir", 'runs/RNN',
+                       "Directory to store model checkpoints (defaults to ./runs)")
+tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
+tf.flags.DEFINE_integer("num_epochs", None,
+                        "Number of training Epochs. Defaults to indefinite.")
+tf.flags.DEFINE_integer("eval_every", 1,
+                        "Evaluate after this many train steps")
+
+
+tf.flags.DEFINE_integer("min_word_frequency", 5,
+                        "Minimum frequency of words in the vocabulary")
+
+tf.flags.DEFINE_integer("max_sentence_len", 160, "Maximum Sentence Length")
+
+# tf.flags.DEFINE_string(
+#     "input_dir", os.path.abspath("./data"),
+#     "Input directory containing original CSV data files (default = './data')")
+
+tf.flags.DEFINE_string(
+    "output_dir", os.path.abspath("./data"),
+    "Output directory for TFRecord files (default = './data')")
+tf.flags.DEFINE_integer(
+    "distraction_num", 9,
+    "Output directory for TFRecord files (default = './data')")
 
 
 if tf.flags.FLAGS.old_data:
@@ -61,35 +90,6 @@ else:
                            "Path to vocabulary.txt file")
     tf.flags.DEFINE_string(
         "vocab_processor_file", os.path.join(tf.flags.FLAGS.input_dir, 'vocab_processor.bin'), "Saved vocabulary processor file")
-
-tf.flags.DEFINE_string("RNN_CNN_MaxPooling_model_dir", 'runs/RNN_CNN_MaxPooling',
-                       "Directory to store model checkpoints (defaults to ./runs)")
-tf.flags.DEFINE_string("RNN_MaxPooling_model_dir", 'runs/RNN_MaxPooling',
-                       "Directory to store model checkpoints (defaults to ./runs)")
-tf.flags.DEFINE_string("RNN_model_dir", 'runs/RNN',
-                       "Directory to store model checkpoints (defaults to ./runs)")
-tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
-tf.flags.DEFINE_integer("num_epochs", None,
-                        "Number of training Epochs. Defaults to indefinite.")
-tf.flags.DEFINE_integer("eval_every", 1,
-                        "Evaluate after this many train steps")
-
-
-tf.flags.DEFINE_integer("min_word_frequency", 5,
-                        "Minimum frequency of words in the vocabulary")
-
-tf.flags.DEFINE_integer("max_sentence_len", 160, "Maximum Sentence Length")
-
-# tf.flags.DEFINE_string(
-#     "input_dir", os.path.abspath("./data"),
-#     "Input directory containing original CSV data files (default = './data')")
-
-tf.flags.DEFINE_string(
-    "output_dir", os.path.abspath("./data"),
-    "Output directory for TFRecord files (default = './data')")
-tf.flags.DEFINE_integer(
-    "distraction_num", 9,
-    "Output directory for TFRecord files (default = './data')")
 
 
 FLAGS = tf.flags.FLAGS

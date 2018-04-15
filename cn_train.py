@@ -8,6 +8,9 @@ import cn_inputs
 from models.model import dual_encoder_model
 from tensorflow.contrib.learn import Estimator
 from models import model
+from tensorflow.python import debug as tf_debug
+
+hooks=tf_debug.TensorBoardDebugHook("MacBook-Pro.local:6064")
 
 FLAGS = tf.flags.FLAGS
 
@@ -59,7 +62,7 @@ def main(unused_argv):
         every_n_steps=FLAGS.eval_every,
         metrics=eval_metrics)  # 喂数据
 
-    estimator.fit(input_fn=input_fn_train, steps=2000, monitors=[eval_monitor])
+    estimator.fit(input_fn=input_fn_train, steps=2000, monitors=[eval_monitor,hooks])
 
 
 if __name__ == "__main__":
