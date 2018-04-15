@@ -86,10 +86,10 @@ else:
     # 'word2vec/word2vec.npy'
     tf.flags.DEFINE_string("word2vec_path", os.path.join(tf.flags.FLAGS.input_dir, 'word2vec.npy'),
                            "Path to word2vec.npy file")
-    tf.flags.DEFINE_string("vocab_path", os.path.join(tf.flags.FLAGS.input_dir, 'vocabulary.txt'),
-                           "Path to vocabulary.txt file")
-    tf.flags.DEFINE_string(
-        "vocab_processor_file", os.path.join(tf.flags.FLAGS.input_dir, 'vocab_processor.bin'), "Saved vocabulary processor file")
+    tf.flags.DEFINE_string("vocab_path", None,"Path to vocabulary.txt file")
+    # tf.flags.DEFINE_string("vocab_path", os.path.join(tf.flags.FLAGS.input_dir, 'vocabulary.txt'),
+    #                        "Path to vocabulary.txt file")
+    tf.flags.DEFINE_string("vocab_processor_file", os.path.join(tf.flags.FLAGS.input_dir, 'vocab_processor.bin'), "Saved vocabulary processor file")
 
 
 FLAGS = tf.flags.FLAGS

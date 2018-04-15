@@ -46,6 +46,7 @@ def create_model_fn(hparams, model_impl, model_fun,
                 RNNInit,
                 is_bidirection)
             train_op = create_train_op(loss, hparams)
+            tf.summary.histogram("TRAIN eval_correct_probs_hist", probs)
             return probs, loss, train_op
 
         if mode == tf.contrib.learn.ModeKeys.INFER:
@@ -59,6 +60,7 @@ def create_model_fn(hparams, model_impl, model_fun,
                 None, model_fun,
                 RNNInit,
                 is_bidirection)
+            tf.summary.histogram("INFER eval_correct_probs_hist", probs)
             return probs, 0.0, None
 
         if mode == tf.contrib.learn.ModeKeys.EVAL:
@@ -103,6 +105,7 @@ def create_model_fn(hparams, model_impl, model_fun,
 
             # Add summaries
             tf.summary.histogram("eval_correct_probs_hist", split_probs[0])
+
             tf.summary.scalar("eval_correct_probs_average",
                               tf.reduce_mean(split_probs[0]))
             tf.summary.histogram("eval_incorrect_probs_hist", split_probs[1])
