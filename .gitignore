@@ -1,0 +1,13 @@
+run/*
+run/
+run
+runs/*
+runs/
+runs
+__pycache__/
+*.bin
+*.meta
+*.index
+*.data*
+*.loca
+data/source/word2vec.npy
