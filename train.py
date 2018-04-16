@@ -72,8 +72,14 @@ with tf.Session() as sess:
         if current_step % FLAGS.evaluate_every == 0:
             context_batch, context_len_bacth, utterance_batch, utterance_len_batch, targets_batch = training.data_loader.load_eval_data(
                 FLAGS.batch_size, FLAGS.max_len)
-            training.eval_step(context_batch, context_len_bacth,
-                               utterance_batch, utterance_len_batch, targets_batchs)
+            accuracy, recall_at_1,recall_at_2,recall_at_5,recall_at_8,recall_at_10=\
+                training.eval_step(context_batch, context_len_bacth,
+                               utterance_batch, utterance_len_batch, targets_batch)
+            print('step {}:Accuracy={},recall_at_1={},'
+                  'recall_at_2={},recall_at_5={}，'
+                  'recall_at_8={}，recall_at_10={}'.format(current_step, accuracy,
+                                                          recall_at_1, recall_at_2, recall_at_5,
+                                                          recall_at_8, recall_at_10))
 
         # save checkpoint
         if current_step % FLAGS.checkpoint_every == 0:
