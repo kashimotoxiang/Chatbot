@@ -27,7 +27,7 @@ with tf.Session() as sess:
     # Define Training procedure
     global_step = tf.Variable(
         0, name="global_step", trainable=False)
-    optimizer = tf.train.AdamOptimizer(1e-1)
+    optimizer = tf.train.AdamOptimizer(hp.learning_rate)
     # optimizer = tf.train.GradientDescentOptimizer(1e-2)
     grads_and_vars = optimizer.compute_gradients(
         training_Model.mean_loss)
