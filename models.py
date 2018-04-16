@@ -1,9 +1,17 @@
 import tensorflow as tf
-import data_loader as dl
+import numpy as np
 FLAGS = tf.flags.FLAGS
 
 
 class Model(object):
+    context_idx = None
+    context_len = None
+    utterance_idx = None
+    utterance_len = None
+    targets = None
+    probs = None
+    mean_loss = None
+
     def __init__(self,
                  hparams,
                  model_fun,
@@ -30,9 +38,6 @@ class Model(object):
                                       shape=[None, 1],
                                       name="targets")
 
-        # W=get_embeddings(hparams)
-        #self.context_embedded = tf.nn.embedding_lookup(W, self.context_idx)
-        #self.utterance_embedded = tf.nn.embedding_lookup(W, self.utterance_idx)
         self.probs, self.mean_loss = dual_encoder_model(hparams,
                                                         self.context_idx,
                                                         self.context_len,
