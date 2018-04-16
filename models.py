@@ -18,23 +18,23 @@ class Model(object):
                  RNNInit=tf.nn.rnn_cell.LSTMCell,
                  is_bidirection=False):
 
-        self.context_idx = tf.placeholder(dtype=tf.float32,
+        self.context_idx = tf.placeholder(dtype=tf.int32,
                                           shape=[
                                               None, hparams.max_context_len],
                                           name='context_idx')
-        self.context_len = tf.placeholder(dtype=tf.float32,
+        self.context_len = tf.placeholder(dtype=tf.int32,
                                           shape=[
-                                              None, hparams.max_context_len],
-                                          name='context_len_idx')
-        self.utterance_idx = tf.placeholder(dtype=tf.float32,
+                                              None, ],
+                                          name='context_len')
+        self.utterance_idx = tf.placeholder(dtype=tf.int32,
                                             shape=[
-                                                None, hparams.max_utterance_len],
+                                                None, hparams.max_context_len],
                                             name='utterance_embedded_idx')
-        self.utterance_len = tf.placeholder(dtype=tf.float32,
+        self.utterance_len = tf.placeholder(dtype=tf.int32,
                                             shape=[
-                                                None, hparams.max_utterance_len],
-                                            name="utterance_len_idx")
-        self.targets = tf.placeholder(dtype=tf.float32,
+                                                None, ],
+                                            name="utterance_len")
+        self.targets = tf.placeholder(dtype=tf.int32,
                                       shape=[None, 1],
                                       name="targets")
 

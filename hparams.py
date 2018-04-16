@@ -21,7 +21,7 @@ tf.flags.DEFINE_boolean("customized_word_vector", True,
 # 'RNN_MaxPooling'
 # 'RNN'
 tf.flags.DEFINE_string("model_name", 'RNN_CNN_MaxPooling',
-                        "choose random or customized word vectors")
+                       "choose random or customized word vectors")
 
 # runs文件夹
 if FLAGS.model_name == 'RNN_CNN_MaxPooling':
@@ -56,7 +56,7 @@ tf.flags.DEFINE_string("optimizer", "Adam",
                        "Optimizer Name (Adam, Adagrad, etc)")
 
 tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
-tf.flags.DEFINE_integer("num_epochs", None,
+tf.flags.DEFINE_integer("num_epochs", 10000,
                         "Number of training Epochs. Defaults to indefinite.")
 tf.flags.DEFINE_integer("eval_every", 1,
                         "Evaluate after this many train steps")
@@ -119,24 +119,23 @@ HParams = namedtuple(
         "max_context_len",
         "max_utterance_len",
         "optimizer",
-        "rnn_dim",
         "vocab_size",
         "vocab_path",
         "word2vec_path",
-
+        "rnn_dim",
     ])
 
 
 def create_hparams():
     return HParams(
         batch_size=FLAGS.batch_size,
-        eval_batch_size=FLAGS.eval_batch_size,
-        vocab_size=FLAGS.vocab_size,
-        optimizer=FLAGS.optimizer,
-        learning_rate=FLAGS.learning_rate,
         embedding_dim=FLAGS.embedding_dim,
+        eval_batch_size=FLAGS.eval_batch_size,
+        learning_rate=FLAGS.learning_rate,
         max_context_len=FLAGS.max_context_len,
         max_utterance_len=FLAGS.max_utterance_len,
+        optimizer=FLAGS.optimizer,
+        vocab_size=FLAGS.vocab_size,
         vocab_path=FLAGS.vocab_path,
         word2vec_path=FLAGS.word2vec_path,
         rnn_dim=FLAGS.rnn_dim)
