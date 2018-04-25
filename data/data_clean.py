@@ -56,7 +56,7 @@ with open('bigdata/csv_test.csv', 'r') as csvfile:
     csv_reader = csv.reader(csvfile)
 
     def reader(row):
-        [file, questiontitle, questiondetails, accept_content] = row
+        [_, questiontitle, questiondetails, accept_content] = row
 
         q = ''.join([questiontitle, questiondetails])
         a = accept_content

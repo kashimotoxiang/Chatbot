@@ -21,7 +21,10 @@ def create_train_op(loss, hparams):
 
 def create_model_fn(hparams, model_impl, model_fun,
                     RNNInit,
-                    is_bidirection=False):
+                    is_bidirection=False,
+                    input_keep_prob=1.0,
+                    output_keep_prob=1.0
+                    ):
 
     def model_fn(features, targets, mode):  # estimator自己传的参数
         context, context_len = get_id_feature(
@@ -30,7 +33,7 @@ def create_model_fn(hparams, model_impl, model_fun,
         utterance, utterance_len = get_id_feature(
             features, "utterance", "utterance_len", hparams.max_utterance_len)
 
-        if mode!=tf.contrib.learn.ModeKeys.INFER:
+        if mode != tf.contrib.learn.ModeKeys.INFER:
             batch_size = targets.get_shape().as_list()[0]
 
         if mode == tf.contrib.learn.ModeKeys.TRAIN:
@@ -44,9 +47,11 @@ def create_model_fn(hparams, model_impl, model_fun,
                 targets,
                 model_fun,
                 RNNInit,
-                is_bidirection)
+                is_bidirection,
+                input_keep_prob,
+                output_keep_prob
+            )
             train_op = create_train_op(loss, hparams)
-            tf.summary.histogram("TRAIN eval_correct_probs_hist", probs)
             return probs, loss, train_op
 
         if mode == tf.contrib.learn.ModeKeys.INFER:
@@ -59,8 +64,10 @@ def create_model_fn(hparams, model_impl, model_fun,
                 utterance_len,
                 None, model_fun,
                 RNNInit,
-                is_bidirection)
-            tf.summary.histogram("INFER eval_correct_probs_hist", probs)
+                is_bidirection,
+                input_keep_prob=1.0,
+                output_keep_prob=1.0
+            )
             return probs, 0.0, None
 
         if mode == tf.contrib.learn.ModeKeys.EVAL:
@@ -105,7 +112,6 @@ def create_model_fn(hparams, model_impl, model_fun,
 
             # Add summaries
             tf.summary.histogram("eval_correct_probs_hist", split_probs[0])
-
             tf.summary.scalar("eval_correct_probs_average",
                               tf.reduce_mean(split_probs[0]))
             tf.summary.histogram("eval_incorrect_probs_hist", split_probs[1])

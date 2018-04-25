@@ -8,19 +8,15 @@ import cn_inputs
 from models.model import dual_encoder_model
 from tensorflow.contrib.learn import Estimator
 from models import model
-from tensorflow.python import debug as tf_debug
+import os
+# os.environ["CUDA VISIBLE DEVICES"] = "3"
 
-hooks=tf_debug.TensorBoardDebugHook("MacBook-Pro.local:6064")
 
 FLAGS = tf.flags.FLAGS
 
 TIMESTAMP = int(time.time())
 
-if FLAGS.RNN_CNN_MaxPooling_model_dir:
-    MODEL_DIR = FLAGS.RNN_CNN_MaxPooling_model_dir
-else:
-    MODEL_DIR = os.path.abspath(os.path.join("./runs", str(TIMESTAMP)))
-
+MODEL_DIR = FLAGS.RUNS
 TRAIN_FILE = os.path.abspath(os.path.join(FLAGS.input_dir, "train.tfrecords"))
 VALIDATION_FILE = os.path.abspath(os.path.join(
     FLAGS.input_dir, "validation.tfrecords"))
@@ -36,24 +32,26 @@ def main(unused_argv):
         model_impl=dual_encoder_model,
         model_fun=model.RNN_CNN_MaxPooling,
         RNNInit=tf.nn.rnn_cell.LSTMCell,
-        is_bidirection=True)
-
+        is_bidirection=True,
+        input_keep_prob=1.0,
+        output_keep_prob=1.0
+    )
     estimator = Estimator(
         model_fn=model_fn,
         model_dir=MODEL_DIR,
         config=tf.contrib.learn.RunConfig())
-    # tf.contrib.learn.RunConfig()
+
     input_fn_train = cn_inputs.create_input_fn(
         mode=tf.contrib.learn.ModeKeys.TRAIN,
         input_files=[TRAIN_FILE],
         batch_size=hparams.batch_size,
         num_epochs=FLAGS.num_epochs)
-
     input_fn_eval = cn_inputs.create_input_fn(
         mode=tf.contrib.learn.ModeKeys.EVAL,
         input_files=[VALIDATION_FILE],
         batch_size=hparams.eval_batch_size,
         num_epochs=1)
+    # tf.contrib.learn.RunConfig()
 
     eval_metrics = cn_metrics.create_evaluation_metrics()
 
@@ -62,7 +60,7 @@ def main(unused_argv):
         every_n_steps=FLAGS.eval_every,
         metrics=eval_metrics)  # 喂数据
 
-    estimator.fit(input_fn=input_fn_train, steps=2000, monitors=[eval_monitor,hooks])
+    estimator.fit(input_fn=input_fn_train, steps=None, monitors=[eval_monitor])
 
 
 if __name__ == "__main__":

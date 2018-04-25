@@ -1,11 +1,5 @@
-# Transforms a scalar string `example_proto` into a pair of a scalar string and
-# a scalar integer, representing an image and its label, respectively.
 import tensorflow as tf
 import numpy as np
-#
-# for example in tf.python_io.tf_record_iterator("train.tfrecords"):
-#     result = tf.train.Example.FromString(example)
-#     pass
 
 
 def decode(serialized_example):

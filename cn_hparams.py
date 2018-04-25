@@ -1,98 +1,109 @@
 import tensorflow as tf
 import os
 from collections import namedtuple
-tf.flags.DEFINE_boolean("old_data", False,
-                        "decide if use the old data")
+
+FLAGS = tf.flags.FLAGS
 
 
-# 1495
-# Model Parameters
+def define_abs_join_path(name, predix_dir, dir, comment=''):
+    return tf.flags.DEFINE_string(name, os.path.abspath(os.path.join(predix_dir, dir)), comment)
+
+
+'''
+开关
+'''
+tf.flags.DEFINE_boolean("customized_word_vector", True,
+                        "choose random or customized word vectors")
+
+
+# 参数选择：
+# 'RNN_CNN_MaxPooling'
+# 'RNN_MaxPooling'
+# 'RNN'
+tf.flags.DEFINE_string("model_name", 'RNN_CNN_MaxPooling',
+                       "choose random or customized word vectors")
+
+# runs文件夹
+if FLAGS.model_name == 'RNN_CNN_MaxPooling':
+    define_abs_join_path("RUNS", '', 'runs/RNN_CNN_MaxPooling')
+elif FLAGS.model_name == 'RNN_MaxPooling':
+    define_abs_join_path("RUNS", '', 'runs/RNN_MaxPooling')
+elif FLAGS.model_name == 'RNN':
+    define_abs_join_path("RUNS", '', 'runs/RNN')
+
+
+'''
+超参数
+'''
 tf.flags.DEFINE_integer(
     "vocab_size",
-    3389,
+    42144,
     "The size of the vocabulary. Only change this if you changed the preprocessing")
 # Model Parameters
-'''tf.flags.DEFINE_integer("embedding_dim", 300,
-                        "Dimensionality of the embeddings")'''
+tf.flags.DEFINE_integer("embedding_dim", 300,
+                        "Dimensionality of the embeddings")
 tf.flags.DEFINE_integer("rnn_dim", 256, "Dimensionality of the RNN cell")
 tf.flags.DEFINE_integer("max_context_len", 160,
                         "Truncate contexts to this length")
 tf.flags.DEFINE_integer("max_utterance_len", 80,
                         "Truncate utterance to this length")
 
-
 # Training Parameters
 tf.flags.DEFINE_float("learning_rate", 0.001, "Learning rate")
 tf.flags.DEFINE_integer("batch_size", 64, "Batch size during training")
-tf.flags.DEFINE_integer("eval_batch_size", 8, "Batch size during evaluation")
+tf.flags.DEFINE_integer("eval_batch_size", 3, "Batch size during evaluation")
 tf.flags.DEFINE_string("optimizer", "Adam",
                        "Optimizer Name (Adam, Adagrad, etc)")
 
-tf.flags.DEFINE_string("RNN_CNN_MaxPooling_model_dir", 'runs/RNN_CNN_MaxPooling',
-                       "Directory to store model checkpoints (defaults to ./runs)")
-tf.flags.DEFINE_string("RNN_MaxPooling_model_dir", 'runs/RNN_MaxPooling',
-                       "Directory to store model checkpoints (defaults to ./runs)")
-tf.flags.DEFINE_string("RNN_model_dir", 'runs/RNN',
-                       "Directory to store model checkpoints (defaults to ./runs)")
 tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
-tf.flags.DEFINE_integer("num_epochs", None,
+tf.flags.DEFINE_integer("num_epochs", 10000,
                         "Number of training Epochs. Defaults to indefinite.")
-tf.flags.DEFINE_integer("eval_every", 1,
+tf.flags.DEFINE_integer("eval_every", 100,
                         "Evaluate after this many train steps")
-
 
 tf.flags.DEFINE_integer("min_word_frequency", 5,
                         "Minimum frequency of words in the vocabulary")
 
 tf.flags.DEFINE_integer("max_sentence_len", 160, "Maximum Sentence Length")
 
-# tf.flags.DEFINE_string(
-#     "input_dir", os.path.abspath("./data"),
-#     "Input directory containing original CSV data files (default = './data')")
-
-tf.flags.DEFINE_string(
-    "output_dir", os.path.abspath("./data"),
-    "Output directory for TFRecord files (default = './data')")
 tf.flags.DEFINE_integer(
     "distraction_num", 9,
     "Output directory for TFRecord files (default = './data')")
 
 
-if tf.flags.FLAGS.old_data:
-    print("using old data/word vector/vocabulary/vocab_processor")
-    tf.flags.DEFINE_integer("embedding_dim", 100,
-                            "Dimensionality of the embeddings")
-    # /data文件夹
-    tf.flags.DEFINE_string("input_dir", "./old_data",
-                           "Directory containing input data files 'train.tfrecords' and 'validation.tfrecords'")
-
-    # Pre-trained embeddings
-    # "./data/glove.6B.100d.txt"
-    # ./data/vocabulary.txt
-    tf.flags.DEFINE_string("word2vec_path", "./old_data/glove.6B.100d.txt",
-                           "Path to pre-trained Glove vectors")
-
-    tf.flags.DEFINE_string("vocab_path", './old_data/vocabulary.txt',
-                           "Path to vocabulary.txt file")
-    tf.flags.DEFINE_string(
-        "vocab_processor_file", "./old_data/vocab_processor.bin", "Saved vocabulary processor file")
-else:
-    print("using new data/word vector/vocabulary/vocab_processor")
-    tf.flags.DEFINE_integer("embedding_dim", 300,
-                            "Dimensionality of the embeddings")
-    # /data文件夹
-    tf.flags.DEFINE_string("input_dir", "./data/new_data/",
-                           "Directory containing input data files 'train.tfrecords' and 'validation.tfrecords'")
-    # 'word2vec/word2vec.npy'
-    tf.flags.DEFINE_string("word2vec_path", os.path.join(tf.flags.FLAGS.input_dir, 'word2vec.npy'),
-                           "Path to word2vec.npy file")
-    tf.flags.DEFINE_string("vocab_path", None,"Path to vocabulary.txt file")
-    # tf.flags.DEFINE_string("vocab_path", os.path.join(tf.flags.FLAGS.input_dir, 'vocabulary.txt'),
-    #                        "Path to vocabulary.txt file")
-    tf.flags.DEFINE_string("vocab_processor_file", os.path.join(tf.flags.FLAGS.input_dir, 'vocab_processor.bin'), "Saved vocabulary processor file")
+'''
+生成数据集文件夹
+'''
+# 输入输出文件夹
+define_abs_join_path("make_data_input_dir", '', "data/source")
+define_abs_join_path("make_data_output_dir", '', "data/new_data")
 
 
-FLAGS = tf.flags.FLAGS
+# 词向量等数据文件夹
+# 'word2vec/word2vec.npy'
+define_abs_join_path("word2vec_path",
+                     FLAGS.make_data_input_dir, "word2vec.npy")
+define_abs_join_path("vocab_path",
+                     FLAGS.make_data_output_dir, 'vocabulary.txt')
+define_abs_join_path("vocab_processor_file",
+                     FLAGS.make_data_output_dir, "vocab_processor.bin")
+define_abs_join_path("initial_embeddings_path",
+                     FLAGS.make_data_output_dir, "initial_embeddings.npy")
+
+'''
+训练文件夹
+'''
+define_abs_join_path("input_dir", '', FLAGS.make_data_output_dir)
+
+# data set 文件夹
+define_abs_join_path("DATASET_FILE",
+                     FLAGS.input_dir, "dataset.pkl")
+
+
+# checkpoint 文件夹
+define_abs_join_path("CHECKPOINT_DIR",
+                     FLAGS.RUNS, "checkpoints")
+
 
 HParams = namedtuple(
     "HParams",
@@ -104,24 +115,23 @@ HParams = namedtuple(
         "max_context_len",
         "max_utterance_len",
         "optimizer",
-        "rnn_dim",
         "vocab_size",
         "vocab_path",
         "word2vec_path",
-
+        "rnn_dim",
     ])
 
 
 def create_hparams():
     return HParams(
         batch_size=FLAGS.batch_size,
-        eval_batch_size=FLAGS.eval_batch_size,
-        vocab_size=FLAGS.vocab_size,
-        optimizer=FLAGS.optimizer,
-        learning_rate=FLAGS.learning_rate,
         embedding_dim=FLAGS.embedding_dim,
+        eval_batch_size=FLAGS.eval_batch_size,
+        learning_rate=FLAGS.learning_rate,
         max_context_len=FLAGS.max_context_len,
         max_utterance_len=FLAGS.max_utterance_len,
+        optimizer=FLAGS.optimizer,
+        vocab_size=FLAGS.vocab_size,
         vocab_path=FLAGS.vocab_path,
         word2vec_path=FLAGS.word2vec_path,
         rnn_dim=FLAGS.rnn_dim)
