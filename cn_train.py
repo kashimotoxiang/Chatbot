@@ -30,7 +30,7 @@ def main(unused_argv):
     model_fn = cn_model.create_model_fn(
         hparams,
         model_impl=dual_encoder_model,
-        model_fun=model.RNN_CNN_MaxPooling,
+        model_fun=model.RNN,
         RNNInit=tf.nn.rnn_cell.LSTMCell,
         is_bidirection=True,
         input_keep_prob=1.0,
@@ -58,7 +58,11 @@ def main(unused_argv):
     eval_monitor = tf.contrib.learn.monitors.ValidationMonitor(
         input_fn=input_fn_eval,
         every_n_steps=FLAGS.eval_every,
-        metrics=eval_metrics)  # 喂数据
+        metrics=eval_metrics,
+        early_stopping_metric="recall_at_1",
+        early_stopping_metric_minimize=True,
+        early_stopping_rounds=3000
+    )  # 喂数据
 
     estimator.fit(input_fn=input_fn_train, steps=None, monitors=[eval_monitor])
 
