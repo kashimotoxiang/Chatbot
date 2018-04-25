@@ -30,7 +30,10 @@ elif FLAGS.model_name == 'RNN_MaxPooling':
     define_abs_join_path("RUNS", '', 'runs/RNN_MaxPooling')
 elif FLAGS.model_name == 'RNN':
     define_abs_join_path("RUNS", '', 'runs/RNN')
-
+elif FLAGS.model_name == 'biLSTM':
+    define_abs_join_path("RUNS", '', 'runs/biLSTM')
+elif FLAGS.model_name == 'LSTM':
+    define_abs_join_path("RUNS", '', 'runs/LSTM')
 
 '''
 超参数

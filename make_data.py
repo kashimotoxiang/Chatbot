@@ -37,12 +37,20 @@ class Dataset():
     valid_data = []
     test_data = []
 
+    tokenized_context_list = []
+    tokenized_context_len_list = []
+    tokenized_utterence_list = []
+    tokenized_utterence_len_list = []
     id2vec_lookup_list = []
     word2id_lookup_list = {}
     # path
     _userdict = ''
 
-    def __init__(self, *, filename,  user_dict, stopword_dict, prop):
+    def __init__(self, *, filename, user_dict, stopword_dict, prop):
+        self.tokenized_context_list = []
+        self.tokenized_context_len_list = []
+        self.tokenized_utterence_list = []
+        self.tokenized_utterence_len_list = []
         # 初始化停用词表
         if stopword_dict is not []:
             self.set_stopword(stopword_dict)
@@ -59,7 +67,7 @@ class Dataset():
         with open(filename, "r", encoding="UTF-8") as csvFile:
             reader = csv.reader(csvFile)
             self.raw_data = [{
-                'question': row[1], 'answer': row[2]} for row in reader if len(row[1]) != 0]
+                'question': row[0], 'answer': row[1]} for row in reader if len(row[1]) != 0]
             csvFile.close()
         self._data_len = len(self.raw_data)
 
@@ -222,6 +230,11 @@ class Dataset():
         utterance_len = len(next(vocab._tokenizer([utterance])))
         label = int(float(label))
 
+        self.tokenized_context_list.append(context_transformed)
+        self.tokenized_utterence_list.append(utterance_transformed)
+        self.tokenized_context_len_list.append(context_len)
+        self.tokenized_utterence_len_list.append(utterance_len)
+
         # New Example
         example = tf.train.Example()
         example.features.feature["context"].int64_list.value.extend(
@@ -258,6 +271,9 @@ class Dataset():
         example.features.feature["utterance_len"].int64_list.value.extend([
             utterance_len])
 
+        self.tokenized_context_list.append(context_transformed)
+        self.tokenized_utterence_list.append(utterance_transformed)
+
         # Distractor sequences
         for i, distractor in enumerate(distractors):
             dis_key = "distractor_{}".format(i)
@@ -278,12 +294,12 @@ class Dataset():
         example transofmration function
         """
         with tf.python_io.TFRecordWriter(output_filename) as writer:
-            # print("Creating TFRecords file at {}...".format(output_filename))
+            print("Creating TFRecords file at {}...".format(output_filename))
 
             examples = map(lambda row: example_fn(
                 row).SerializeToString(), data)
 
-            # print("Wrote to {}".format(output_filename))
+            print("Wrote to {}".format(output_filename))
             for item in examples:
                 writer.write(item)
 
@@ -291,7 +307,7 @@ class Dataset():
         with open(outfile, "w", encoding='utf-8') as vocabfile:
             list(map(lambda item: vocabfile.write('%s\n' % item),
                      vocab_processor.vocabulary_._reverse_mapping))
-        # print("Saved vocabulary to {}".format(outfile))
+        print("Saved vocabulary to {}".format(outfile))
 
 
 def create_embeddings(vocab_array, word2vec, embedding_dim):
@@ -333,6 +349,19 @@ def create_embeddings(vocab_array, word2vec, embedding_dim):
     np.save(FLAGS.initial_embeddings_path, initial_embeddings)
 
 
+class Tokenized():
+    tokenized_context_list = []
+    tokenized_context_len_list = []
+    tokenized_utterence_list = []
+    tokenized_utterence_len_list = []
+
+    def __init__(self):
+        self.tokenized_context_list = []
+        self.tokenized_context_len_list = []
+        self.tokenized_utterence_list = []
+        self.tokenized_utterence_len_list = []
+
+
 if __name__ == "__main__":
     dataset = Dataset(filename="data/corpus/aftercleaning_excludesubtitle.csv",
                       # dataset = Dataset(filename="data/corpus/corpus_small.csv",
@@ -343,16 +372,7 @@ if __name__ == "__main__":
                       prop=[0.95, 0.03, 0.02])
 
     print("Creating input...")
-
-    def input_map(x):
-        try:
-            result = ''.join([x['question'], ' ', x['answer']])
-        except Exception as e:
-            print(e)
-
-        return result
-
-    input_iter = list(map(input_map, dataset.raw_data))
+    input_iter = (x['question']+' '+x['answer'] for x in dataset.raw_data)
     print("Creating vocabulary...")
     vocab = dataset.create_vocab(
         input_iter, min_frequency=FLAGS.min_word_frequency)
@@ -370,14 +390,6 @@ if __name__ == "__main__":
         vocab.vocabulary_._reverse_mapping,
         np.load(FLAGS.word2vec_path),
         FLAGS.embedding_dim)
-
-    print("Creating training tfrecords...")
-    input = [[x['question'], x['answer'], x['label']]
-             for x in dataset.train_data]
-    dataset.create_tfrecords_file(input,
-                                  output_filename=os.path.join(
-                                      FLAGS.make_data_output_dir, "train.tfrecords"),
-                                  example_fn=functools.partial(dataset.create_example_train, vocab=vocab))
 
     # Create tfrecords
     print("Creating validation tfrecords...")
@@ -399,3 +411,23 @@ if __name__ == "__main__":
                                   output_filename=os.path.join(
                                       FLAGS.make_data_output_dir, "test.tfrecords"),
                                   example_fn=functools.partial(dataset.create_example_test, vocab=vocab))  # 固定函数变量
+
+    print("Creating training tfrecords...")
+    input = [[x['question'], x['answer'], x['label']]
+             for x in dataset.train_data]
+    dataset.create_tfrecords_file(input,
+                                  output_filename=os.path.join(
+                                      FLAGS.make_data_output_dir, "train.tfrecords"),
+                                  example_fn=functools.partial(dataset.create_example_train, vocab=vocab))
+    tokenized = Tokenized()
+    tokenized.tokenized_context_list = np.array(
+        dataset.tokenized_context_list)
+    tokenized.tokenized_context_len_list = np.array(
+        dataset.tokenized_context_len_list)
+    tokenized.tokenized_utterence_list = np.array(
+        dataset.tokenized_utterence_list)
+    tokenized.tokenized_utterence_len_list = np.array(
+        dataset.tokenized_utterence_len_list)
+
+    fp.save_obj(tokenized, os.path.join(
+        FLAGS.make_data_output_dir, "tokenized.pkl"))
