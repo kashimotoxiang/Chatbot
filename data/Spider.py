@@ -37,7 +37,7 @@ def re_match(rules, data):
             item = re.sub(r'(^<br>)|(<br>$)|(^\ {1,})|(\ {1,}$)', '', item)
             item = re.sub(r'(^<br>)|(<br>$)|(^\ {1,})|(\ {1,}$)', '', item)
             return item
-    return[]
+    return []
 
 
 class Spider():

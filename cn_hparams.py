@@ -12,28 +12,40 @@ def define_abs_join_path(name, predix_dir, dir, comment=''):
 '''
 开关
 '''
-tf.flags.DEFINE_boolean("customized_word_vector", True,
-                        "choose random or customized word vectors")
 
 
-# 参数选择：
-# 'RNN_CNN_MaxPooling'
-# 'RNN_MaxPooling'
-# 'RNN'
-tf.flags.DEFINE_string("model_name", 'RNN_CNN_MaxPooling',
-                       "choose random or customized word vectors")
+def model_dir_generator(use_word2vec, model_name, RNNInit_name, is_bidirection):
+    tf.flags.DEFINE_boolean("customized_word_vector", use_word2vec,
+                            "choose random or customized word vectors")
+
+    if use_word2vec:
+        model_path = os.path.abspath(os.path.join("runs", 'word2vec'))
+    else:
+        model_path = os.path.abspath(os.path.join("runs", 'randomInitializer'))
+
+    model_path = os.path.join(model_path, model_name, RNNInit_name)
+
+    if is_bidirection:
+        model_path = os.path.join(model_path, 'bidirection')
+    else:
+        model_path = os.path.join(model_path, 'unidirection')
+
+    tf.flags.DEFINE_string("RUNS", model_path, '')
+    define_abs_join_path("CHECKPOINT_DIR",
+                         FLAGS.RUNS, "checkpoints")
+
 
 # runs文件夹
-if FLAGS.model_name == 'RNN_CNN_MaxPooling':
-    define_abs_join_path("RUNS", '', 'runs/RNN_CNN_MaxPooling')
-elif FLAGS.model_name == 'RNN_MaxPooling':
-    define_abs_join_path("RUNS", '', 'runs/RNN_MaxPooling')
-elif FLAGS.model_name == 'RNN':
-    define_abs_join_path("RUNS", '', 'runs/RNN')
-elif FLAGS.model_name == 'biLSTM':
-    define_abs_join_path("RUNS", '', 'runs/biLSTM')
-elif FLAGS.model_name == 'LSTM':
-    define_abs_join_path("RUNS", '', 'runs/LSTM')
+# if FLAGS.model_name == 'RNN_CNN_MaxPooling':
+#     define_abs_join_path("RUNS", '', 'runs/RNN_CNN_MaxPooling')
+# elif FLAGS.model_name == 'RNN_MaxPooling':
+#     define_abs_join_path("RUNS", '', 'runs/RNN_MaxPooling')
+# elif FLAGS.model_name == 'RNN':
+#     define_abs_join_path("RUNS", '', 'runs/RNN')
+# elif FLAGS.model_name == 'biLSTM':
+#     define_abs_join_path("RUNS", '', 'runs/biLSTM')
+# elif FLAGS.model_name == 'LSTM':
+#     define_abs_join_path("RUNS", '', 'runs/LSTM')
 
 '''
 超参数
@@ -61,7 +73,7 @@ tf.flags.DEFINE_string("optimizer", "Adam",
 tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
 tf.flags.DEFINE_integer("num_epochs", 10000,
                         "Number of training Epochs. Defaults to indefinite.")
-tf.flags.DEFINE_integer("eval_every", 100,
+tf.flags.DEFINE_integer("eval_every", 500,
                         "Evaluate after this many train steps")
 
 tf.flags.DEFINE_integer("min_word_frequency", 5,
@@ -73,14 +85,12 @@ tf.flags.DEFINE_integer(
     "distraction_num", 9,
     "Output directory for TFRecord files (default = './data')")
 
-
 '''
 生成数据集文件夹
 '''
 # 输入输出文件夹
 define_abs_join_path("make_data_input_dir", '', "data/source")
 define_abs_join_path("make_data_output_dir", '', "data/new_data")
-
 
 # 词向量等数据文件夹
 # 'word2vec/word2vec.npy'
@@ -102,10 +112,9 @@ define_abs_join_path("input_dir", '', FLAGS.make_data_output_dir)
 define_abs_join_path("DATASET_FILE",
                      FLAGS.input_dir, "dataset.pkl")
 
-
 # checkpoint 文件夹
-define_abs_join_path("CHECKPOINT_DIR",
-                     FLAGS.RUNS, "checkpoints")
+# define_abs_join_path("CHECKPOINT_DIR",
+#                      FLAGS.RUNS, "checkpoints")
 
 
 HParams = namedtuple(

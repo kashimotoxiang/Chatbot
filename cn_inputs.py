@@ -75,4 +75,5 @@ def create_input_fn(mode, input_files, batch_size, num_epochs):
             # The first one (index 0) is always the correct one
             target = tf.zeros([batch_size, 1], dtype=tf.int64)
         return feature_map, target
+
     return input_fn

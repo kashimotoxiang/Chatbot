@@ -11,7 +11,8 @@ def decode(serialized_example):
                 }
     parsed_features = tf.parse_single_example(serialized_example, features)
     # context = parsed_features["context"]
-    return parsed_features["context"], parsed_features["context_len"], parsed_features["utterance"], parsed_features["utterance_len"], parsed_features["label"]
+    return parsed_features["context"], parsed_features["context_len"], parsed_features["utterance"], parsed_features[
+        "utterance_len"], parsed_features["label"]
 
 
 filename = ["train.tfrecords"]
@@ -28,11 +29,11 @@ label = []
 with tf.Session() as sess:
     try:
         while True:
-            context.append(sess.run(context_i,))
-            context_len.append(sess.run(context_len_i,))
-            utterance.append(sess.run(utterance_i,))
-            utterance_len.append(sess.run(utterance_len_i,))
-            label.append(sess.run(label_i,))
+            context.append(sess.run(context_i, ))
+            context_len.append(sess.run(context_len_i, ))
+            utterance.append(sess.run(utterance_i, ))
+            utterance_len.append(sess.run(utterance_len_i, ))
+            label.append(sess.run(label_i, ))
     except tf.errors.OutOfRangeError:
         pass
 

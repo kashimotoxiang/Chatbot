@@ -7,14 +7,16 @@ import cn_model
 import cn_hparams
 import cn_metrics
 import cn_inputs
-from models.model import dual_encoder_model
+from models.model import encoder_model
 from models import model
 
-tf.flags.DEFINE_string("test_file", "./data/test.tfrecords",
+tf.flags.DEFINE_string("test_file", "./data/new_data/test.tfrecords",
                        "Path of test data in TFRecords format")
-tf.flags.DEFINE_string("model_dir", "./runs/RNN_CNN_MaxPooling",
+tf.flags.DEFINE_string("model_dir", "./runs/word2vec/rnn_cnn_attention60/LSTMCell/bidirection",
                        "Directory to load model checkpoints from")
 tf.flags.DEFINE_integer("test_batch_size", 16, "Batch size for testing")
+tf.flags.DEFINE_boolean("customized_word_vector", True,
+                        "choose random or customized word vectors")
 FLAGS = tf.flags.FLAGS
 
 if not FLAGS.model_dir:
@@ -27,7 +29,7 @@ if __name__ == "__main__":
     hparams = cn_hparams.create_hparams()
     model_fn = cn_model.create_model_fn(
         hparams,
-        model_impl=dual_encoder_model,
+        model_impl=encoder_model,
         model_fun=model.RNN_CNN_MaxPooling,
         RNNInit=tf.nn.rnn_cell.LSTMCell,
         is_bidirection=True

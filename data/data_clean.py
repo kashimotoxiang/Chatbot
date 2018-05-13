@@ -50,10 +50,10 @@ error_char = {r'，{1,}': r',',
               #   r"问题分析:": r"",
               }
 
-
 result = []
 with open('bigdata/csv_test.csv', 'r') as csvfile:
     csv_reader = csv.reader(csvfile)
+
 
     def reader(row):
         [_, questiontitle, questiondetails, accept_content] = row
@@ -65,9 +65,12 @@ with open('bigdata/csv_test.csv', 'r') as csvfile:
             for source, substitute in error_char.items():
                 data = re.sub(source, substitute, data)
             return data
+
         q = sample_process(q)
         a = sample_process(a)
         result.append([q, a])
+
+
     list(map(reader, csv_reader))
 
 with open('bigdata/aftercleaning_includesubtitle.csv', 'w') as csvfile:

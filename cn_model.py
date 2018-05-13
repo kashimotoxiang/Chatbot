@@ -25,7 +25,6 @@ def create_model_fn(hparams, model_impl, model_fun,
                     input_keep_prob=1.0,
                     output_keep_prob=1.0
                     ):
-
     def model_fn(features, targets, mode):  # estimator自己传的参数
         context, context_len = get_id_feature(
             features, "context", "context_len", hparams.max_context_len)

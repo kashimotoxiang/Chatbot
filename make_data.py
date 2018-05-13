@@ -16,6 +16,8 @@ import random
 from collections import defaultdict
 import array
 import copy
+import lyx.common as lyx
+
 FLAGS = tf.flags.FLAGS
 
 
@@ -24,7 +26,7 @@ class Dataset():
     _stopwordset = ''
 
     _counter = 0
-    _bar = progressbar.ProgressBar(max_value=100)
+    _bar = progressbar.ProgressBar(maxval=100)
     raw_data = []
     _data_len = 0
 
@@ -67,7 +69,7 @@ class Dataset():
         with open(filename, "r", encoding="UTF-8") as csvFile:
             reader = csv.reader(csvFile)
             self.raw_data = [{
-                'question': row[0], 'answer': row[1]} for row in reader if len(row[1]) != 0]
+                'question': row[1], 'answer': row[2]} for row in reader if len(row[1]) != 0]
             csvFile.close()
         self._data_len = len(self.raw_data)
 
@@ -100,7 +102,7 @@ class Dataset():
             data_len = len(_data)
             try:
                 utterance_index = np.random.random_integers(
-                    1, length)+i  # 避免撞上自己
+                    1, length) + i  # 避免撞上自己
                 utterance_index = utterance_index % data_len
                 utterance = _data[utterance_index]['answer']
                 return utterance
@@ -108,6 +110,7 @@ class Dataset():
                 print(e)
 
                 # add neg sample into training data
+
         def map_train_data(data):
             data['label'] = 1
             return data
@@ -117,9 +120,11 @@ class Dataset():
             map(map_neg_utterance, range(len(self.train_data))))
 
         neg_train_data = [{
-            'question': self.train_data[i]['question'], 'answer': neg_utterance[i], 'label': 0} for i in range(len(self.train_data))]
+            'question': self.train_data[i]['question'], 'answer': neg_utterance[i], 'label': 0} for i in
+            range(len(self.train_data))]
         self.train_data = pos_train_data + neg_train_data
         random.shuffle(self.train_data)
+
         # Distractor sequences
 
         def map_test_data(_data):
@@ -230,11 +235,6 @@ class Dataset():
         utterance_len = len(next(vocab._tokenizer([utterance])))
         label = int(float(label))
 
-        self.tokenized_context_list.append(context_transformed)
-        self.tokenized_utterence_list.append(utterance_transformed)
-        self.tokenized_context_len_list.append(context_len)
-        self.tokenized_utterence_len_list.append(utterance_len)
-
         # New Example
         example = tf.train.Example()
         example.features.feature["context"].int64_list.value.extend(
@@ -242,7 +242,7 @@ class Dataset():
         example.features.feature["utterance"].int64_list.value.extend(
             utterance_transformed)
         example.features.feature["context_len"].int64_list.value.extend([
-                                                                        context_len])
+            context_len])
         example.features.feature["utterance_len"].int64_list.value.extend([
             utterance_len])
         example.features.feature["label"].int64_list.value.extend([label])
@@ -267,12 +267,9 @@ class Dataset():
         example.features.feature["utterance"].int64_list.value.extend(
             utterance_transformed)
         example.features.feature["context_len"].int64_list.value.extend([
-                                                                        context_len])
+            context_len])
         example.features.feature["utterance_len"].int64_list.value.extend([
             utterance_len])
-
-        self.tokenized_context_list.append(context_transformed)
-        self.tokenized_utterence_list.append(utterance_transformed)
 
         # Distractor sequences
         for i, distractor in enumerate(distractors):
@@ -308,6 +305,20 @@ class Dataset():
             list(map(lambda item: vocabfile.write('%s\n' % item),
                      vocab_processor.vocabulary_._reverse_mapping))
         print("Saved vocabulary to {}".format(outfile))
+
+
+    def len_tokenizer(self, input):
+        # 繁体转简体
+        text = HanziConv.toSimplified(input)
+        # 分词
+        text = jieba.lcut(text)
+        # 去除停用词
+        if self._stopwordset:
+            text = self.movestopwords(text)
+        return len(text)
+
+
+
 
 
 def create_embeddings(vocab_array, word2vec, embedding_dim):
@@ -350,84 +361,111 @@ def create_embeddings(vocab_array, word2vec, embedding_dim):
 
 
 class Tokenized():
-    tokenized_context_list = []
-    tokenized_context_len_list = []
-    tokenized_utterence_list = []
-    tokenized_utterence_len_list = []
+    tokenized_context_list = None
+    tokenized_context_len_list = None
+    tokenized_utterence_list = None
+    tokenized_utterence_len_list = None
+    dataset = None
+    vocab = None
 
-    def __init__(self):
-        self.tokenized_context_list = []
-        self.tokenized_context_len_list = []
-        self.tokenized_utterence_list = []
-        self.tokenized_utterence_len_list = []
+    def __init__(self, dataset, vocab):
+        self.dataset = dataset
+        self.vocab = vocab
+        raw_data=self.dataset.raw_data
+
+        question_data = [x['question'] for x in raw_data]
+
+        print('tokenized_context_list')
+        tokenized_context_list = list(
+            lyx.mp_map(self.tokenizer, question_data))
+        print('tokenized_context_len_list')
+        tokenized_context_len_list = list(
+            lyx.mp_map(self.dataset.len_tokenizer, question_data))
+
+        answer_data = [x['answer'] for x in raw_data]
+        print('tokenized_utterence_list')
+        tokenized_utterence_list = list(
+            lyx.mp_map(self.tokenizer, answer_data))
+        print('tokenized_utterence_len_list')
+        tokenized_utterence_len_list = list(
+            lyx.mp_map(self.dataset.len_tokenizer,  answer_data))
+
+        self.tokenized_context_list = np.array(tokenized_context_list)
+        self.tokenized_context_len_list = np.array(tokenized_context_len_list)
+        self.tokenized_utterence_list = np.array(tokenized_utterence_list)
+        self.tokenized_utterence_len_list = np.array(
+            tokenized_utterence_len_list)
+
+    def tokenizer(self, input):
+        return self.dataset.transform_sentence(input, self.vocab)
 
 
 if __name__ == "__main__":
-    dataset = Dataset(filename="data/corpus/aftercleaning_excludesubtitle.csv",
-                      # dataset = Dataset(filename="data/corpus/corpus_small.csv",
-                      user_dict="data/dict/自定义词典.txt",
-                      stopword_dict=[
-                          'data/dict/哈工大停用词表.txt',
-                          'data/dict/自定义停用词.txt'],
-                      prop=[0.95, 0.03, 0.02])
+    # dataset = Dataset(filename="data/corpus/aftercleaning_excludesubtitle.csv",
+    #                   # aftercleaning_excludesubtitle
+    #                   # corpus_small
+    #                   user_dict="data/dict/自定义词典.txt",
+    #                   stopword_dict=[
+    #                       'data/dict/哈工大停用词表.txt',
+    #                       'data/dict/自定义停用词.txt'],
+    #                   prop=[0.95, 0.03, 0.02])
+    #
+    # print("Creating input...")
+    # input_iter = (x['question'] + ' ' + x['answer'] for x in dataset.raw_data)
+    # print("Creating vocabulary...")
+    # vocab = dataset.create_vocab(
+    #     input_iter, min_frequency=FLAGS.min_word_frequency)
+    # print("Total vocabulary size: {}".format(len(vocab.vocabulary_)))
+    # lyx.save_pkl(vocab, "vocab")
+    # lyx.save_pkl(dataset, "dataset")
 
-    print("Creating input...")
-    input_iter = (x['question']+' '+x['answer'] for x in dataset.raw_data)
-    print("Creating vocabulary...")
-    vocab = dataset.create_vocab(
-        input_iter, min_frequency=FLAGS.min_word_frequency)
-    print("Total vocabulary size: {}".format(len(vocab.vocabulary_)))
+    vocab=lyx.load_pkl("vocab")
+    dataset=lyx.load_pkl("dataset")
 
-    # Create vocabulary.txt file
-    dataset.write_vocabulary(vocab, os.path.join(
-        FLAGS.make_data_output_dir, 'vocabulary.txt'))
 
-    # Save vocab processor
-    vocab.save(os.path.join(
-        FLAGS.make_data_output_dir, 'vocab_processor.bin'))
+    # # Create vocabulary.txt file
+    # dataset.write_vocabulary(vocab, os.path.join(
+    #     FLAGS.make_data_output_dir, 'vocabulary.txt'))
+    #
+    # # Save vocab processor
+    # vocab.save(os.path.join(
+    #     FLAGS.make_data_output_dir, 'vocab_processor.bin'))
+    #
+    # create_embeddings(
+    #     vocab.vocabulary_._reverse_mapping,
+    #     np.load(FLAGS.word2vec_path),
+    #     FLAGS.embedding_dim)
+    # # Create tfrecords
+    # print("Creating validation tfrecords...")
+    # input = ([x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
+    #           x['distractor_3'], x['distractor_4'], x['distractor_5'],
+    #           x['distractor_6'], x['distractor_7'], x['distractor_8'],
+    #           ] for x in dataset.valid_data)
+    # dataset.create_tfrecords_file(input,
+    #                               output_filename=os.path.join(
+    #                                   FLAGS.make_data_output_dir, "validation.tfrecords"),
+    #                               example_fn=functools.partial(dataset.create_example_test, vocab=vocab))
+    #
+    # print("Creating test tfrecords...")
+    # input = ([x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
+    #           x['distractor_3'], x['distractor_4'], x['distractor_5'],
+    #           x['distractor_6'], x['distractor_7'], x['distractor_8'],
+    #           ] for x in dataset.test_data)
+    # dataset.create_tfrecords_file(input,
+    #                               output_filename=os.path.join(
+    #                                   FLAGS.make_data_output_dir, "test.tfrecords"),
+    #                               example_fn=functools.partial(dataset.create_example_test, vocab=vocab))  # 固定函数变量
+    #
+    # print("Creating training tfrecords...")
+    # input = ([x['question'], x['answer'], x['label']]
+    #          for x in dataset.train_data)
+    # dataset.create_tfrecords_file(input,
+    #                               output_filename=os.path.join(
+    #                                   FLAGS.make_data_output_dir, "train.tfrecords"),
+    #                               example_fn=functools.partial(dataset.create_example_train, vocab=vocab))
+    #
 
-    create_embeddings(
-        vocab.vocabulary_._reverse_mapping,
-        np.load(FLAGS.word2vec_path),
-        FLAGS.embedding_dim)
+    tokenized = Tokenized(dataset, vocab)
 
-    # Create tfrecords
-    print("Creating validation tfrecords...")
-    input = [[x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
-              x['distractor_3'], x['distractor_4'], x['distractor_5'],
-              x['distractor_6'], x['distractor_7'], x['distractor_8'],
-              ] for x in dataset.valid_data]
-    dataset.create_tfrecords_file(input,
-                                  output_filename=os.path.join(
-                                      FLAGS.make_data_output_dir, "validation.tfrecords"),
-                                  example_fn=functools.partial(dataset.create_example_test, vocab=vocab))
-
-    print("Creating test tfrecords...")
-    input = [[x['question'], x['answer'], x['distractor_0'], x['distractor_1'], x['distractor_2'],
-              x['distractor_3'], x['distractor_4'], x['distractor_5'],
-              x['distractor_6'], x['distractor_7'], x['distractor_8'],
-              ] for x in dataset.test_data]
-    dataset.create_tfrecords_file(input,
-                                  output_filename=os.path.join(
-                                      FLAGS.make_data_output_dir, "test.tfrecords"),
-                                  example_fn=functools.partial(dataset.create_example_test, vocab=vocab))  # 固定函数变量
-
-    print("Creating training tfrecords...")
-    input = [[x['question'], x['answer'], x['label']]
-             for x in dataset.train_data]
-    dataset.create_tfrecords_file(input,
-                                  output_filename=os.path.join(
-                                      FLAGS.make_data_output_dir, "train.tfrecords"),
-                                  example_fn=functools.partial(dataset.create_example_train, vocab=vocab))
-    tokenized = Tokenized()
-    tokenized.tokenized_context_list = np.array(
-        dataset.tokenized_context_list)
-    tokenized.tokenized_context_len_list = np.array(
-        dataset.tokenized_context_len_list)
-    tokenized.tokenized_utterence_list = np.array(
-        dataset.tokenized_utterence_list)
-    tokenized.tokenized_utterence_len_list = np.array(
-        dataset.tokenized_utterence_len_list)
-
-    fp.save_obj(tokenized, os.path.join(
-        FLAGS.make_data_output_dir, "tokenized.pkl"))
+    lyx.save_pkl(tokenized, os.path.join(
+        FLAGS.make_data_output_dir, "tokenized"))

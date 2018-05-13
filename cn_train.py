@@ -1,16 +1,31 @@
-import os
 import time
 import tensorflow as tf
 import cn_model
 import cn_hparams
 import cn_metrics
 import cn_inputs
-from models.model import dual_encoder_model
+from models.model import encoder_model
 from tensorflow.contrib.learn import Estimator
 from models import model
 import os
+import functools
+
 # os.environ["CUDA VISIBLE DEVICES"] = "3"
 
+
+use_word2vec = True
+model = functools.partial(model.RNN_CNN_Attention, filtersizes=[2, 3, 4, 5],
+                          num_filters=60)
+# model=model.RNN
+RNNInit = tf.nn.rnn_cell.LSTMCell
+is_bidirection = True
+
+if isinstance(model, functools.partial):
+    model_name = model.func.__name__ + str(model.keywords['num_filters'])
+else:
+    model_name = model.__name__
+
+cn_hparams.model_dir_generator(use_word2vec, model_name, RNNInit.__name__, is_bidirection)
 
 FLAGS = tf.flags.FLAGS
 
@@ -29,10 +44,10 @@ def main(unused_argv):
     # model_fun=[2,3,4,5],30
     model_fn = cn_model.create_model_fn(
         hparams,
-        model_impl=dual_encoder_model,
-        model_fun=model.RNN,
-        RNNInit=tf.nn.rnn_cell.LSTMCell,
-        is_bidirection=True,
+        model_impl=encoder_model,
+        model_fun=model,
+        RNNInit=RNNInit,
+        is_bidirection=is_bidirection,
         input_keep_prob=1.0,
         output_keep_prob=1.0
     )
@@ -61,10 +76,10 @@ def main(unused_argv):
         metrics=eval_metrics,
         early_stopping_metric="recall_at_1",
         early_stopping_metric_minimize=True,
-        early_stopping_rounds=3000
+        early_stopping_rounds=10000
     )  # 喂数据
 
-    estimator.fit(input_fn=input_fn_train, steps=None, monitors=[eval_monitor])
+    estimator.fit(input_fn=input_fn_train, steps=10000, monitors=[eval_monitor])
 
 
 if __name__ == "__main__":
