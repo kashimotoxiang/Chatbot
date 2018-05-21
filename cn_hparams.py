@@ -73,7 +73,7 @@ tf.flags.DEFINE_string("optimizer", "Adam",
 tf.flags.DEFINE_integer("loglevel", 20, "Tensorflow log level")
 tf.flags.DEFINE_integer("num_epochs", 10000,
                         "Number of training Epochs. Defaults to indefinite.")
-tf.flags.DEFINE_integer("eval_every", 500,
+tf.flags.DEFINE_integer("eval_every", 1,
                         "Evaluate after this many train steps")
 
 tf.flags.DEFINE_integer("min_word_frequency", 5,

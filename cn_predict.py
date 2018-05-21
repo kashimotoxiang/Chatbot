@@ -30,7 +30,7 @@ is_bidirection = True
 
 cn_hparams.model_dir_generator(
     use_word2vec, model.name+'60', RNNInit.__name__, is_bidirection)
-vocab=lyx.load_pkl("vocab")
+vocab = lyx.load_pkl("vocab")
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 FLAGS = tf.flags.FLAGS
@@ -61,7 +61,7 @@ def get_utterance_features(tokenized, utterence_range):
 def get_features(tokenized, input, utterence_range):
 
     context = next(vp.transform([input])).tolist()
-    context_len =len(next(vocab._tokenizer([input])))
+    context_len = len(next(vocab._tokenizer([input])))
     utterance_matrix = tokenized.tokenized_utterence_list[utterence_range[0]:utterence_range[1]]
     utterance_len = tokenized.tokenized_utterence_len_list[utterence_range[0]:utterence_range[1]]
 
@@ -83,8 +83,8 @@ def get_features(tokenized, input, utterence_range):
 if __name__ == "__main__":
 
     # get raw data
-    dataset=lyx.load_pkl('dataset')
-    raw_data=dataset.raw_data
+    dataset = lyx.load_pkl('dataset')
+    raw_data = dataset.raw_data
 
     # restore model & parameters
     hparams = cn_hparams.create_hparams()
@@ -103,32 +103,19 @@ if __name__ == "__main__":
     while True:
         input_question = input('欢迎咨询医疗问题，请描述您的问题: ')
 
-
         # if input the index of question
         if input_question.isdigit():
             input_question_index = int(input_question)
-            input_question=raw_data[input_question_index]['question']
+            input_question = raw_data[input_question_index]['question']
 
-        print('您的问题：%s'%input_question)
+        print('您的问题：%s' % input_question)
 
-        probs = np.array(list(estimator.predict(input_fn=lambda: get_features(tokenized, input_question, [0, 100]))))
+        probs = np.array(list(estimator.predict(input_fn=lambda: get_features(tokenized, input_question, [0, 10]))))
         sort_probs_idx = np.argsort(-probs, 0).flatten()
-        print(sort_probs_idx[:100])
+        print(sort_probs_idx[:10])
         top_index = sort_probs_idx[:10]
         max_probs = np.max(probs)
         print('结合您的描述：')
-        for index in top_index:
-            print(str(index)+"\t"+raw_data[index]["question"]+"\t"+raw_data[index]["answer"])
-
-    # max_index = np.argmax(probs)
-    # max_probs = np.max(probs)
-
-    # print("answer_id: {max_index} probs:{max_probs}".format(
-    #     max_index=max_index, max_probs=max_probs))
-    # print('\nmatrices of probs:')
-    # print(max_probs)
-    #
-    # print('question: {}'.format(raw_data[CONTEXT_INDEX]["question"]))
-    # print('right answer: {}'.format(raw_data[CONTEXT_INDEX]["answer"]))
-    # print('The most likely answer: {}'.format(raw_data[max_index]["answer"]))
-    # print('rank of right answer is: {}'.format(right_answer_rank))
+        # for index in top_index:
+        # print(str(index)+"\t"+raw_data[index]["question"]+"\t"+raw_data[index]["answer"])
+        print(raw_data[top_index[0]]["answer"])

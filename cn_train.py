@@ -14,8 +14,7 @@ import functools
 
 
 use_word2vec = True
-model = functools.partial(model.RNN_CNN_Attention, filtersizes=[2, 3, 4, 5],
-                          num_filters=60)
+model = model.RNN_MaxPooling
 # model=model.RNN
 RNNInit = tf.nn.rnn_cell.LSTMCell
 is_bidirection = True
